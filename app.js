@@ -1076,534 +1076,368 @@ document.addEventListener('touchend', function(e) {
   lastTap = now;
 }
 
-let chatHistory = [];
+// ===== CHATBOT WITH CLEAR RESPONSES =====
 
-// ===== INTELLIGENT RESPONSE GENERATOR =====
-function generateResponse(userMessage) {
-  const msg = userMessage.toLowerCase().trim();
+var chatHistory = [];
+
+// ===== GENERATE RESPONSE =====
+window.generateResponse = function(userMessage) {
+  var msg = userMessage.toLowerCase().trim();
+  var profile = state.userProfile || {};
+  var score = calculateScore();
   
-  // Check if profile exists
-  if (!state.userProfile.name && !msg.includes('profile') && !msg.includes('hello') && !msg.includes('hi')) {
-    return "👋 Hi! I notice you haven't completed your profile yet. Please go to the Profile page first so I can give you personalized advice!";
+  // GREETINGS
+  if (msg.match(/^(hi|hello|hey|sup|yo)/)) {
+    return "👋 Hi " + (profile.name || "there") + "! How can I help you with your health today?\n\n💡 Try asking:\n• Should I exercise?\n• Am I hydrated?\n• How's my score?\n• What should I eat?";
   }
   
-  const profile = state.userProfile;
-  const score = calculateScore();
-  
-  // ===== GREETINGS =====
-  if (msg.match(/^(hi|hello|hey|sup|yo)\b/)) {
-    const greetings = [
-      `Hi ${profile.name || 'there'}! How can I help you with your health today?`,
-      `Hello! Ready to crush your wellness goals today?`,
-      `Hey! What would you like to know about your health?`,
-      `Hi! Your wellness score is ${score}/100. What can I help you with?`
-    ];
-    return greetings[Math.floor(Math.random() * greetings.length)];
-  }
-  
-  // ===== EXERCISE & ACTIVITY =====
-  if (msg.includes('exercise') || msg.includes('workout') || msg.includes('train') || msg.includes('activity')) {
-    const weatherData = getCachedWeather();
-    let response = '';
+  // EXERCISE
+  if (msg.includes('exercise') || msg.includes('workout') || msg.includes('train')) {
+    var response = "💪 EXERCISE ADVICE\n\n";
+    response += "📊 Your current steps: " + state.steps + "/8000\n\n";
     
     if (state.steps < 3000) {
-      response = `💪 You've only logged ${state.steps} steps today. Let's boost that! `;
+      response += "⚠️ Low activity today! Time to move!\n\n";
     } else if (state.steps < 6000) {
-      response = `🚶 Good progress - ${state.steps} steps so far! `;
+      response += "✅ Good progress - keep going!\n\n";
     } else {
-      response = `🔥 Awesome! ${state.steps} steps today! `;
+      response += "🔥 Excellent! You're crushing it!\n\n";
     }
     
-    // Age-based recommendations
-    if (profile.age < 30) {
-      response += `At ${profile.age}, you can handle intense workouts. Try:\n• 30-45 min HIIT or running\n• Strength training 3-4x/week\n• High-intensity sports`;
-    } else if (profile.age < 50) {
-      response += `For age ${profile.age}, I recommend:\n• 30-40 min brisk walking or moderate cardio\n• Strength training 2-3x/week\n• Mix of cardio and flexibility`;
+    if (profile.age && profile.age < 30) {
+      response += "Recommended (Age " + profile.age + "):\n• 30-45 min HIIT or running\n• Strength training 3-4x/week\n• High-intensity activities";
+    } else if (profile.age && profile.age < 50) {
+      response += "Recommended (Age " + profile.age + "):\n• 30-40 min brisk walking\n• Moderate cardio 3x/week\n• Mix cardio + flexibility";
+    } else if (profile.age) {
+      response += "Recommended (Age " + profile.age + "):\n• 20-30 min light walking\n• Gentle yoga/stretching\n• Balance exercises";
     } else {
-      response += `At ${profile.age}, focus on:\n• 20-30 min light walking\n• Gentle yoga or stretching\n• Balance and flexibility exercises`;
+      response += "Recommended:\n• 30 minutes moderate exercise\n• Complete your profile for personalized advice!";
     }
     
-    // Weather integration
-    if (weatherData && weatherData.temp) {
-      if (weatherData.temp > 35) {
-        response += `\n\n⚠️ It's ${weatherData.temp}°C - TOO HOT! Exercise indoors or wait until evening.`;
-      } else if (weatherData.temp < 10) {
-        response += `\n\n❄️ It's ${weatherData.temp}°C - quite cold! Warm up indoors first and layer up.`;
-      } else if (weatherData.condition.toLowerCase().includes('rain')) {
-        response += `\n\n🌧️ It's raining - perfect time for indoor yoga or home workouts!`;
+    var weather = getCachedWeather();
+    if (weather && weather.temp !== null) {
+      response += "\n\n🌤️ WEATHER UPDATE:";
+      if (weather.temp > 35) {
+        response += "\n⚠️ " + weather.temp + "°C - TOO HOT!\n→ Exercise indoors or wait until evening";
+      } else if (weather.temp < 10) {
+        response += "\n❄️ " + weather.temp + "°C - Cold!\n→ Warm up indoors first, layer up";
       } else {
-        response += `\n\n🌤️ Weather is ${weatherData.temp}°C - perfect for outdoor activity!`;
+        response += "\n✅ " + weather.temp + "°C - Perfect for outdoor activity!";
       }
     }
     
     return response;
   }
   
-  // ===== WATER & HYDRATION =====
+  // WATER
   if (msg.includes('water') || msg.includes('hydrat') || msg.includes('drink')) {
-    let response = '';
-    const remaining = 8 - state.water;
+    var response = "💧 HYDRATION STATUS\n\n";
+    var remaining = 8 - state.water;
+    
+    response += "📊 Current: " + state.water + "/8 glasses\n";
+    response += "🎯 Goal: 8 glasses (2 liters)\n\n";
     
     if (state.water === 0) {
-      response = `💧 You haven't logged any water today! Start now - drink 2 glasses immediately.`;
+      response += "❌ NO WATER LOGGED TODAY!\n\n";
+      response += "⚠️ You're dehydrated!\n";
+      response += "→ Drink 2 glasses RIGHT NOW\n";
+      response += "→ Set hourly reminders";
     } else if (state.water < 4) {
-      response = `💧 You've had ${state.water}/8 glasses. That's ${remaining} glasses to go! You're dehydrated - drink up!`;
+      response += "⚠️ BELOW TARGET!\n\n";
+      response += "You need " + remaining + " more glasses\n";
+      response += "→ Drink 1 glass every hour\n";
+      response += "→ Keep water bottle visible";
     } else if (state.water < 8) {
-      response = `💧 Good progress! ${state.water}/8 glasses done. Just ${remaining} more to hit your goal!`;
+      response += "✅ GOOD PROGRESS!\n\n";
+      response += "Just " + remaining + " more to go!\n";
+      response += "→ You're almost there!";
     } else {
-      response = `🎉 Excellent! You've hit your hydration goal (${state.water}/8 glasses). Keep it up!`;
+      response += "🎉 GOAL ACHIEVED!\n\n";
+      response += "Perfect hydration today!\n";
+      response += "→ Keep up the great work!";
     }
     
-    // Add weather-based advice
-    const weatherData = getCachedWeather();
-    if (weatherData && weatherData.temp > 30) {
-      response += `\n\n🌡️ It's ${weatherData.temp}°C outside - drink extra! Aim for 10-12 glasses in hot weather.`;
-    }
-    
-    // Add BMI-based advice
-    const h = profile.height / 100;
-    const bmi = profile.weight / (h * h);
-    if (bmi > 25) {
-      response += `\n\n💡 Tip: Drinking water before meals can help with weight management!`;
+    var weather = getCachedWeather();
+    if (weather && weather.temp > 30) {
+      response += "\n\n🌡️ Hot weather (" + weather.temp + "°C)\n→ Drink 10-12 glasses today!";
     }
     
     return response;
   }
   
-  // ===== MOOD & MENTAL HEALTH =====
-  if (msg.includes('mood') || msg.includes('feel') || msg.includes('emotion') || msg.includes('mental') || msg.includes('stress') || msg.includes('anxious')) {
-    let response = '';
-    
+  // MOOD
+  if (msg.includes('mood') || msg.includes('feel') || msg.includes('emotion')) {
     if (state.moods.length === 0) {
-      return `🧠 You haven't logged any moods yet! Track your emotions daily to understand patterns. Go to the Mood page to start!`;
+      return "🧠 MOOD TRACKING\n\n❌ No moods logged yet!\n\n→ Go to the Mood page\n→ Start tracking daily\n→ Understand your patterns\n\nTracking emotions helps identify triggers and improve mental wellness!";
     }
     
-    const recentMoods = state.moods.slice(-7);
-    const latestMood = state.moods[state.moods.length - 1].mood;
+    var response = "🧠 MOOD ANALYSIS\n\n";
+    var latest = state.moods[state.moods.length - 1].mood;
+    response += "📊 Latest mood: " + latest + "\n";
+    response += "📅 Total entries: " + state.moods.length + "\n\n";
     
-    const positives = recentMoods.filter(m => 
-      m.mood.includes('Happy') || m.mood.includes('Calm') || 
-      m.mood.includes('Motivated') || m.mood.includes('Energetic') || 
-      m.mood.includes('Focused')
-    ).length;
+    var recent = state.moods.slice(-7);
+    var positive = 0;
+    var negative = 0;
     
-    const negatives = recentMoods.filter(m => 
-      m.mood.includes('Stressed') || m.mood.includes('Anxious') || 
-      m.mood.includes('Sad') || m.mood.includes('Tired')
-    ).length;
+    recent.forEach(function(m) {
+      if (m.mood.includes('Happy') || m.mood.includes('Calm') || m.mood.includes('Motivated') || m.mood.includes('Energetic')) {
+        positive++;
+      } else if (m.mood.includes('Stressed') || m.mood.includes('Anxious') || m.mood.includes('Sad') || m.mood.includes('Tired')) {
+        negative++;
+      }
+    });
     
-    response = `🧠 Mood Analysis:\n\n`;
-    response += `Latest: ${latestMood}\n`;
-    response += `Recent trend: ${positives} positive, ${negatives} negative moods\n\n`;
+    response += "📈 Recent trend:\n";
+    response += "✅ Positive: " + positive + "\n";
+    response += "⚠️ Challenging: " + negative + "\n\n";
     
-    if (positives > negatives) {
-      response += `✨ You're doing great! Your mood has been mostly positive. Keep up your wellness routine!`;
-    } else if (negatives > positives) {
-      response += `💚 I notice some challenging emotions. Try:\n• 10-min meditation\n• Talk to a friend\n• Go for a walk\n• Deep breathing exercises\n\nRemember: It's okay to seek professional help if needed.`;
+    if (positive > negative) {
+      response += "🌟 GREAT NEWS!\n→ Your mood is mostly positive\n→ Keep up your routine!";
+    } else if (negative > positive) {
+      response += "💚 NEED SUPPORT?\n\nTry these:\n• 10-min meditation\n• Talk to a friend\n• Take a walk\n• Deep breathing\n\n💡 Consider professional help if needed";
     } else {
-      response += `⚖️ Your moods are balanced. Continue tracking to identify patterns.`;
+      response += "⚖️ BALANCED\n→ Continue tracking\n→ Identify patterns";
     }
     
     return response;
   }
   
-  // ===== WELLNESS SCORE =====
+  // SCORE
   if (msg.includes('score') || msg.includes('progress') || msg.includes('doing')) {
-    let response = `📊 Your Wellness Score: ${score}/100\n\n`;
+    var response = "📊 WELLNESS SCORE REPORT\n\n";
+    response += "🎯 Current Score: " + score + "/100\n\n";
     
     if (score >= 80) {
-      response += `🌟 EXCELLENT! You're a wellness warrior! Keep up the amazing work!`;
+      response += "🌟 EXCELLENT!\n→ You're a wellness warrior!\n→ Keep crushing it!\n\n";
     } else if (score >= 60) {
-      response += `💪 GOOD! You're on the right track. Let's push to 80+!`;
+      response += "💪 GOOD JOB!\n→ You're on track\n→ Push to 80+ for excellence!\n\n";
     } else if (score >= 40) {
-      response += `📈 FAIR. Room for improvement! Focus on:`;
+      response += "📈 FAIR - Room to improve!\n\n";
     } else {
-      response += `⚠️ Needs attention! Let's boost your score:`;
+      response += "⚠️ NEEDS ATTENTION!\n\n";
     }
     
-    response += '\n\n';
+    response += "📋 Breakdown:\n";
+    response += "👣 Steps: " + state.steps + "/8000 " + (state.steps >= 6000 ? "✅" : "⚠️") + "\n";
+    response += "💧 Water: " + state.water + "/8 " + (state.water >= 8 ? "✅" : "⚠️") + "\n";
+    response += "🔥 Calories: " + state.calories + " kcal\n";
+    response += "🏃 Activities: " + state.activities.length + "\n";
+    response += "😊 Moods: " + state.moods.length + "\n\n";
     
-    // Specific recommendations
-    if (state.steps < 6000) {
-      response += `• ⬆️ Increase steps (currently ${state.steps}/8000)\n`;
-    }
-    if (state.water < 8) {
-      response += `• ⬆️ Drink more water (currently ${state.water}/8 glasses)\n`;
-    }
-    if (state.moods.length < 3) {
-      response += `• ⬆️ Track your mood daily\n`;
-    }
-    if (state.activities.length < 5) {
-      response += `• ⬆️ Log more activities\n`;
-    }
+    response += "🎯 TO IMPROVE:\n";
+    if (state.steps < 6000) response += "→ Walk more (+" + (6000 - state.steps) + " steps)\n";
+    if (state.water < 8) response += "→ Drink more water (+" + (8 - state.water) + " glasses)\n";
+    if (state.moods.length < 5) response += "→ Track mood daily\n";
+    if (state.activities.length < 10) response += "→ Log more activities\n";
     
-    return response.trim();
+    return response;
   }
   
-  // ===== NUTRITION & DIET =====
-  if (msg.includes('eat') || msg.includes('food') || msg.includes('diet') || msg.includes('nutrition') || msg.includes('calorie')) {
-    let response = '';
+  // NUTRITION
+  if (msg.includes('eat') || msg.includes('food') || msg.includes('diet') || msg.includes('nutrition')) {
+    if (!profile.height || !profile.weight) {
+      return "🍎 NUTRITION ADVICE\n\n❌ Profile incomplete!\n\n→ Go to Profile page\n→ Add height & weight\n→ Get personalized diet plan\n\nI need your stats to calculate BMI and give proper advice!";
+    }
     
-    // BMI-based advice
-    const h = profile.height / 100;
-    const bmi = profile.weight / (h * h);
+    var h = profile.height / 100;
+    var bmi = (profile.weight / (h * h)).toFixed(1);
+    var response = "🍎 PERSONALIZED NUTRITION PLAN\n\n";
+    response += "📊 Your BMI: " + bmi + "\n";
     
     if (bmi < 18.5) {
-      response = `🍎 You're underweight (BMI: ${bmi.toFixed(1)}). Focus on:\n• Calorie surplus (eat more than you burn)\n• Protein-rich foods (eggs, chicken, fish, lentils)\n• Healthy fats (nuts, avocado, olive oil)\n• 5-6 small meals daily\n• Strength training to build muscle`;
+      response += "📉 Category: Underweight\n\n";
+      response += "🎯 GOAL: Gain weight healthily\n\n";
+      response += "✅ EAT MORE:\n";
+      response += "• Protein-rich (eggs, chicken, fish, lentils)\n";
+      response += "• Healthy fats (nuts, avocado, olive oil)\n";
+      response += "• Calorie-dense foods\n";
+      response += "• 5-6 small meals daily\n\n";
+      response += "💪 COMBINE WITH:\n";
+      response += "• Strength training\n";
+      response += "• Muscle building exercises";
     } else if (bmi < 25) {
-      response = `🍎 You're at a healthy weight (BMI: ${bmi.toFixed(1)}). Maintain with:\n• Balanced meals (protein, carbs, healthy fats)\n• Plenty of vegetables and fruits\n• Stay hydrated (8+ glasses water)\n• Avoid processed foods\n• Regular exercise`;
+      response += "✅ Category: Healthy Weight!\n\n";
+      response += "🎯 GOAL: Maintain current weight\n\n";
+      response += "✅ BALANCED DIET:\n";
+      response += "• Protein, carbs, healthy fats\n";
+      response += "• Plenty of vegetables & fruits\n";
+      response += "• 8+ glasses water daily\n";
+      response += "• Limit processed foods\n\n";
+      response += "💪 STAY ACTIVE:\n";
+      response += "• Regular exercise\n";
+      response += "• Active lifestyle";
     } else if (bmi < 30) {
-      response = `🍎 You're overweight (BMI: ${bmi.toFixed(1)}). For healthy weight loss:\n• Calorie deficit (300-500 kcal/day)\n• High protein, high fiber foods\n• Reduce sugar and processed foods\n• Portion control\n• Combine with regular exercise`;
+      response += "📈 Category: Overweight\n\n";
+      response += "🎯 GOAL: Healthy weight loss\n\n";
+      response += "✅ DIET PLAN:\n";
+      response += "• Calorie deficit (300-500 kcal/day)\n";
+      response += "• High protein, high fiber\n";
+      response += "• Reduce sugar & processed foods\n";
+      response += "• Portion control important\n\n";
+      response += "💪 EXERCISE:\n";
+      response += "• 30-45 min daily\n";
+      response += "• Cardio + strength training\n\n";
+      response += "📉 Expected: -2kg per month";
     } else {
-      response = `🍎 You're obese (BMI: ${bmi.toFixed(1)}). Health-focused plan:\n• Consult a nutritionist for personalized plan\n• Focus on whole foods, vegetables\n• Eliminate sugary drinks and junk food\n• Start with light exercise (walking)\n• Track calories and portions`;
+      response += "⚠️ Category: Obese\n\n";
+      response += "🎯 GOAL: Significant weight loss\n\n";
+      response += "❗ IMPORTANT:\n";
+      response += "• Consult a nutritionist\n";
+      response += "• Medical supervision recommended\n\n";
+      response += "✅ IMMEDIATE STEPS:\n";
+      response += "• Focus on whole foods\n";
+      response += "• Eliminate sugary drinks\n";
+      response += "• Start with walking\n";
+      response += "• Track every meal\n\n";
+      response += "💡 Small changes lead to big results!";
     }
     
-    // Add current calorie info
     if (state.calories > 0) {
-      response += `\n\n📊 Today's calories: ${state.calories} kcal`;
-    }
-    
-    // Health condition specific
-    if (profile.healthIssue === 'Diabetes') {
-      response += `\n\n⚕️ For diabetes: Low GI foods, avoid sugar, regular meal timing, monitor blood sugar!`;
-    } else if (profile.healthIssue === 'BP') {
-      response += `\n\n⚕️ For BP: Limit sodium, eat potassium-rich foods (bananas, spinach), avoid processed foods!`;
+      response += "\n\n📊 Today's intake: " + state.calories + " kcal";
     }
     
     return response;
   }
   
-  // ===== WEIGHT & BMI =====
-  if (msg.includes('weight') || msg.includes('bmi') || msg.includes('lose') || msg.includes('gain')) {
-    const h = profile.height / 100;
-    const bmi = (profile.weight / (h * h)).toFixed(1);
-    
-    let category = '';
-    if (bmi < 18.5) category = 'Underweight';
-    else if (bmi < 25) category = 'Normal';
-    else if (bmi < 30) category = 'Overweight';
-    else category = 'Obese';
-    
-    let response = `⚖️ Your Stats:\n`;
-    response += `Height: ${profile.height} cm\n`;
-    response += `Weight: ${profile.weight} kg\n`;
-    response += `BMI: ${bmi} (${category})\n\n`;
-    
-    if (profile.goal === 'Weight Loss' && bmi > 25) {
-      response += `🎯 Your goal: Weight Loss\n\n`;
-      response += `To lose 0.5kg/week safely:\n`;
-      response += `• Calorie deficit: 500 kcal/day\n`;
-      response += `• Exercise: 30-45 min daily\n`;
-      response += `• High protein, low carb diet\n`;
-      response += `• Track every meal\n`;
-      response += `• Sleep 7-8 hours\n\n`;
-      response += `Expected: -2kg/month 📉`;
-    } else if (profile.goal === 'Muscle Gain' && bmi < 25) {
-      response += `🎯 Your goal: Muscle Gain\n\n`;
-      response += `To build muscle:\n`;
-      response += `• Calorie surplus: 300-500 kcal/day\n`;
-      response += `• Protein: ${Math.round(profile.weight * 1.6)}g daily\n`;
-      response += `• Strength training: 4-5x/week\n`;
-      response += `• Progressive overload\n`;
-      response += `• Rest days for recovery`;
-    } else {
-      response += `💡 Recommendation: ${category === 'Normal' ? 'Maintain your healthy weight!' : 'Consider setting a weight goal in your profile.'}`;
-    }
-    
-    return response;
-  }
-  
-  // ===== SLEEP =====
-  if (msg.includes('sleep') || msg.includes('tired') || msg.includes('energy')) {
-    return `😴 Sleep & Energy Tips:\n\n` +
-           `For quality sleep:\n` +
-           `• Go to bed same time daily\n` +
-           `• No screens 1 hour before bed\n` +
-           `• Dark, cool room (18-20°C)\n` +
-           `• No caffeine after 3 PM\n` +
-           `• 7-8 hours minimum\n\n` +
-           `For more energy:\n` +
-           `• Drink water immediately after waking\n` +
-           `• Exercise in the morning\n` +
-           `• Eat regular, balanced meals\n` +
-           `• Take short breaks every hour\n` +
-           `${state.water < 6 ? '• You may be dehydrated - drink more water!' : ''}`;
-  }
-  
-  // ===== MOTIVATION =====
-  if (msg.includes('motivat') || msg.includes('inspire') || msg.includes('give up') || msg.includes('lazy')) {
-    const motivations = [
-      `💪 You've got this! Every step counts toward your goal of ${profile.goal || 'wellness'}!`,
-      `🔥 Remember why you started! Your health is your wealth!`,
-      `🌟 ${profile.name}, you're stronger than you think! Keep pushing!`,
-      `🎯 Small daily improvements = Big results! You're at ${score}/100 - let's hit 80+!`,
-      `💯 Consistency beats perfection! Just show up today!`,
-      `🏆 Champions are made in practice. Your ${state.activities.length} activities prove you're committed!`,
-      `⚡ Your future self will thank you for not giving up today!`,
-      `🌈 Progress, not perfection! You're ${state.steps} steps closer to your goal!`
+  // MOTIVATION
+  if (msg.includes('motivat') || msg.includes('inspire') || msg.includes('lazy') || msg.includes('give up')) {
+    var quotes = [
+      "💪 YOU'VE GOT THIS!\n\nEvery step forward counts. You're at " + score + "/100 - let's push to 80+!\n\n🔥 Remember: Progress > Perfection",
+      "🌟 DON'T GIVE UP NOW!\n\n" + (profile.name || "You") + ", you're stronger than you think!\n\n💯 Consistency beats talent every time!",
+      "⚡ KEEP PUSHING!\n\nYou've logged:\n• " + state.steps + " steps\n• " + state.water + " glasses water\n• " + state.activities.length + " activities\n\nThat's dedication! 🏆",
+      "🔥 YOUR FUTURE SELF WILL THANK YOU!\n\nGoal: " + (profile.goal || "Wellness") + "\n\nEvery healthy choice today = Better tomorrow!\n\n💪 Let's do this!",
+      "🌈 PROGRESS CHECK:\n\nFrom 0 to " + score + "/100!\n\nYou're building momentum!\n\n🎯 Small wins = Big victories!"
     ];
-    return motivations[Math.floor(Math.random() * motivations.length)];
+    return quotes[Math.floor(Math.random() * quotes.length)];
   }
   
-  // ===== GOAL-SPECIFIC =====
-  if (msg.includes('goal')) {
-    if (!profile.goal) {
-      return `🎯 You haven't set a goal yet! Go to your Profile and choose one:\n• Weight Loss\n• Muscle Gain\n• Mental Peace\n• Healthy Lifestyle\n• Disease Management`;
-    }
+  // SUMMARY
+  if (msg.includes('summary') || msg.includes('report') || msg.includes('today') || msg.includes('overview')) {
+    var response = "📋 DAILY SUMMARY";
+    if (profile.name) response += " - " + profile.name;
+    response += "\n\n";
     
-    let response = `🎯 Your Goal: ${profile.goal}\n\n`;
+    response += "📊 TODAY'S STATS:\n";
+    response += "👣 Steps: " + state.steps + "/8000 " + (state.steps >= 8000 ? "✅" : "❌") + "\n";
+    response += "💧 Water: " + state.water + "/8 " + (state.water >= 8 ? "✅" : "❌") + "\n";
+    response += "🔥 Calories: " + state.calories + " kcal\n";
+    response += "🏃 Activities: " + state.activities.length + "\n";
+    response += "😊 Mood: " + (state.moods.length > 0 ? state.moods[state.moods.length - 1].mood : "Not logged") + "\n";
+    response += "🏆 Badges: " + state.earnedBadges.size + "/6\n\n";
     
-    switch(profile.goal) {
-      case 'Weight Loss':
-        response += `To lose weight effectively:\n` +
-                   `✓ Current BMI: ${(profile.weight / ((profile.height/100) ** 2)).toFixed(1)}\n` +
-                   `✓ Calorie deficit needed\n` +
-                   `✓ Exercise 5x/week\n` +
-                   `✓ Track your food\n` +
-                   `✓ Stay consistent!\n\n` +
-                   `Today: ${state.steps} steps, ${state.water} glasses water`;
-        break;
-      case 'Muscle Gain':
-        response += `To build muscle:\n` +
-                   `✓ Protein: ${Math.round(profile.weight * 1.6)}g/day needed\n` +
-                   `✓ Strength train 4-5x/week\n` +
-                   `✓ Progressive overload\n` +
-                   `✓ Rest days crucial\n` +
-                   `✓ Calorie surplus\n\n` +
-                   `Activities logged: ${state.activities.length}`;
-        break;
-      case 'Mental Peace':
-        response += `For mental wellness:\n` +
-                   `✓ Meditate 10-15 min daily\n` +
-                   `✓ Journal your thoughts\n` +
-                   `✓ Regular exercise (mood booster)\n` +
-                   `✓ Quality sleep 7-8 hours\n` +
-                   `✓ Limit screen time\n\n` +
-                   `Mood entries: ${state.moods.length}`;
-        break;
-      default:
-        response += `Keep working on it! Track your daily activities and stay consistent!`;
-    }
-    
-    return response;
-  }
-  
-  // ===== ACHIEVEMENTS =====
-  if (msg.includes('achievement') || msg.includes('badge') || msg.includes('award')) {
-    let response = `🏆 Your Achievements:\n\n`;
-    
-    if (state.earnedBadges.size === 0) {
-      response += `No badges yet! Here's how to earn them:\n\n`;
-      response += `🚶 Active Champ - Walk 6,000+ steps (Current: ${state.steps})\n`;
-      response += `💧 Hydration Hero - Drink 8 glasses (Current: ${state.water}/8)\n`;
-      response += `💖 Emotion Aware - Track mood 5 days (Current: ${state.moods.length})\n`;
-      response += `🧠 Mental Master - Score 70%+ on quiz\n`;
-      response += `🏃 Fitness Enthusiast - Complete 10 activities (Current: ${state.activities.length})\n`;
-      response += `🌟 Wellness Warrior - Reach 80+ score (Current: ${score})\n`;
-    } else {
-      response += `You've earned ${state.earnedBadges.size}/6 badges!\n\n`;
-      state.earnedBadges.forEach(badge => {
-        response += `✅ ${badge}\n`;
-      });
-      response += `\nKeep going to collect them all! 🎯`;
-    }
-    
-    return response;
-  }
-  
-  // ===== HEALTH CONDITION =====
-  if (msg.includes('health') || msg.includes('condition') || msg.includes('disease')) {
-    if (!profile.healthIssue || profile.healthIssue === 'None') {
-      return `✅ Great! You don't have any logged health conditions. Keep up the healthy lifestyle!`;
-    }
-    
-    let response = `⚕️ Health Condition: ${profile.healthIssue}\n\n`;
-    
-    switch(profile.healthIssue) {
-      case 'BP':
-        response += `Blood Pressure Management:\n` +
-                   `• Limit sodium (<2300mg/day)\n` +
-                   `• Regular exercise (walking best)\n` +
-                   `• Manage stress & sleep well\n` +
-                   `• Monitor BP regularly\n` +
-                   `• Avoid alcohol & smoking\n` +
-                   `• Take medication as prescribed`;
-        break;
-      case 'Diabetes':
-        response += `Diabetes Management:\n` +
-                   `• Low GI foods (whole grains)\n` +
-                   `• Regular meal timing\n` +
-                   `• Monitor blood sugar\n` +
-                   `• Exercise 30 min daily\n` +
-                   `• Avoid sugary drinks\n` +
-                   `• Foot care important`;
-        break;
-      case 'PCOS':
-        response += `PCOS Management:\n` +
-                   `• Regular exercise (especially strength)\n` +
-                   `• Low refined carbs\n` +
-                   `• Weight management crucial\n` +
-                   `• Manage stress\n` +
-                   `• Track menstrual cycle\n` +
-                   `• Consider supplements (consult doctor)`;
-        break;
-      case 'Thyroid':
-        response += `Thyroid Management:\n` +
-                   `• Take medication consistently\n` +
-                   `• Regular check-ups\n` +
-                   `• Balanced iodine intake\n` +
-                   `• Manage stress\n` +
-                   `• Regular exercise\n` +
-                   `• Track symptoms`;
-        break;
-      case 'Asthma':
-        response += `Asthma Management:\n` +
-                   `• Avoid triggers (dust, smoke)\n` +
-                   `• Breathing exercises\n` +
-                   `• Keep inhaler accessible\n` +
-                   `• Regular check-ups\n` +
-                   `• Monitor air quality\n` +
-                   `• Gradual exercise warm-up`;
-        break;
-      case 'Heart':
-        response += `Heart Health:\n` +
-                   `• Heart-healthy diet (omega-3, fiber)\n` +
-                   `• Moderate exercise (doctor approved)\n` +
-                   `• Stress management crucial\n` +
-                   `• No smoking, limit alcohol\n` +
-                   `• Regular check-ups\n` +
-                   `• Monitor symptoms closely`;
-        break;
-    }
-    
-    return response;
-  }
-  
-  // ===== TIPS & ADVICE =====
-  if (msg.includes('tip') || msg.includes('advice') || msg.includes('suggest') || msg.includes('recommend')) {
-    const tips = [
-      `💡 Take stairs instead of elevator - easy way to add 500+ steps!`,
-      `💡 Keep a water bottle visible - you'll drink more automatically!`,
-      `💡 Meal prep on Sundays - saves time and keeps you on track!`,
-      `💡 5-minute morning stretching can boost energy all day!`,
-      `💡 Walk while on phone calls - multitask your way to fitness!`,
-      `💡 Use smaller plates - helps with portion control naturally!`,
-      `💡 Set hourly reminders to stand and stretch!`,
-      `💡 Track your progress - what gets measured gets improved!`,
-      `💡 Find a workout buddy - accountability boosts consistency!`,
-      `💡 Celebrate small wins - every step forward matters!`
-    ];
-    return tips[Math.floor(Math.random() * tips.length)];
-  }
-  
-  // ===== SUMMARY/REPORT =====
-  if (msg.includes('summary') || msg.includes('report') || msg.includes('overview') || msg.includes('today')) {
-    let response = `📋 Daily Summary for ${profile.name}:\n\n`;
-    response += `👣 Steps: ${state.steps}/8000 ${state.steps >= 8000 ? '✅' : '⚠️'}\n`;
-    response += `💧 Water: ${state.water}/8 glasses ${state.water >= 8 ? '✅' : '⚠️'}\n`;
-    response += `🔥 Calories: ${state.calories} kcal\n`;
-    response += `😊 Mood: ${state.moods.length > 0 ? state.moods[state.moods.length - 1].mood : 'Not logged'}\n`;
-    response += `🏃 Activities: ${state.activities.length} logged\n`;
-    response += `📊 Wellness Score: ${score}/100\n`;
-    response += `🏆 Badges: ${state.earnedBadges.size}/6\n\n`;
+    response += "📈 WELLNESS SCORE: " + score + "/100\n\n";
     
     if (score >= 80) {
-      response += `🌟 Excellent day! Keep it up!`;
+      response += "🌟 VERDICT: Excellent day!\n→ Keep this momentum!";
     } else if (score >= 60) {
-      response += `💪 Good progress! Push for 80+ tomorrow!`;
+      response += "💪 VERDICT: Good progress!\n→ Push for 80+ tomorrow!";
     } else {
-      response += `⚡ Let's improve tomorrow! Small steps lead to big changes!`;
+      response += "⚡ VERDICT: Room to improve!\n→ Small steps = Big changes!";
     }
     
     return response;
   }
   
-  // ===== HELP =====
-  if (msg.includes('help') || msg.includes('what can you') || msg.includes('how do')) {
-    return `🤖 I can help you with:\n\n` +
-           `💪 Exercise - "Should I exercise?", "Workout advice"\n` +
-           `💧 Hydration - "Am I drinking enough water?"\n` +
-           `🧠 Mood - "Analyze my mood", "Mental health tips"\n` +
-           `📊 Progress - "How is my score?", "Summary"\n` +
-           `🍎 Nutrition - "What should I eat?", "Diet advice"\n` +
-           `⚖️ Weight - "BMI analysis", "Weight loss tips"\n` +
-           `🎯 Goals - "Goal advice", "Am I on track?"\n` +
-           `🏆 Achievements - "Show my badges"\n` +
-           `⚕️ Health - "Condition advice"\n` +
-           `💡 Tips - "Give me tips", "Motivate me"\n\n` +
-           `Just ask naturally! I understand context. 😊`;
+  // HELP
+  if (msg.includes('help') || msg.includes('what can') || msg.includes('commands')) {
+    return "🤖 AI ASSISTANT - COMMANDS\n\n💪 EXERCISE\n'Should I exercise?', 'Workout advice'\n\n💧 HYDRATION\n'Am I hydrated?', 'Water check'\n\n📊 PROGRESS\n'How's my score?', 'Summary'\n\n🍎 NUTRITION\n'What should I eat?', 'Diet plan'\n\n🧠 MOOD\n'Analyze my mood', 'How am I feeling?'\n\n🔥 MOTIVATION\n'Motivate me!', 'Inspire me'\n\n💡 Just ask naturally - I understand!";
   }
   
-  // ===== DEFAULT RESPONSE =====
-  const defaults = [
-    `I'm not sure I understood that. Try asking about exercise, water, mood, nutrition, or your wellness score!`,
-    `Hmm, I didn't catch that. Ask me about your health goals, activities, or diet!`,
-    `Could you rephrase that? I can help with exercise advice, hydration tips, mood tracking, and more!`,
-    `I'm here to help! Try: "Should I exercise?", "Am I hydrated?", "How's my score?", "Motivate me!"`,
-  ];
-  
-  return defaults[Math.floor(Math.random() * defaults.length)] + `\n\n💡 Type "help" to see what I can do!`;
-}
+  // DEFAULT
+  return "🤔 HMMMM...\n\nI didn't quite understand that.\n\n💡 TRY ASKING:\n• Should I exercise?\n• Am I drinking enough water?\n• How's my wellness score?\n• What should I eat?\n• Analyze my mood\n• Motivate me!\n\nOr type 'help' for all commands!";
+};
 
-// ===== SEND MESSAGE FUNCTION =====
-function sendMessage() {
-  const input = document.getElementById('userMessage');
-  const message = input.value.trim();
-  
-  if (!message) {
-    showAlert('Please type a message', 'error');
+// ===== SEND MESSAGE =====
+window.sendMessage = function() {
+  var input = document.getElementById('userMessage');
+  if (!input) {
+    alert("ERROR: Chat input not found! Check HTML.");
     return;
   }
   
-  // Add user message
+  var message = input.value.trim();
+  if (!message) {
+    showAlert('Please type a message first!', 'error');
+    return;
+  }
+  
+  // Show user message
   addChatMessage('user', message);
   input.value = '';
+  input.focus();
   
-  // Generate and add bot response
-  setTimeout(() => {
-    const response = generateResponse(message);
+  // Show "typing..." indicator
+  var chatDiv = document.getElementById('chatHistory');
+  var typingDiv = document.createElement('div');
+  typingDiv.id = 'typingIndicator';
+  typingDiv.style.cssText = 'background:rgba(78,205,196,0.1);padding:12px;border-radius:12px;margin-bottom:12px;font-style:italic;color:#4ecdc4';
+  typingDiv.innerHTML = '🤖 Assistant is typing...';
+  chatDiv.appendChild(typingDiv);
+  chatDiv.scrollTop = chatDiv.scrollHeight;
+  
+  // Generate response after delay
+  setTimeout(function() {
+    // Remove typing indicator
+    var typing = document.getElementById('typingIndicator');
+    if (typing) typing.remove();
+    
+    // Show bot response
+    var response = generateResponse(message);
     addChatMessage('bot', response);
-  }, 500); // Small delay for natural feel
-}
+  }, 800);
+};
 
 // ===== QUICK QUESTION =====
-function quickQuestion(question) {
-  document.getElementById('userMessage').value = question;
-  sendMessage();
-}
+window.quickQuestion = function(question) {
+  var input = document.getElementById('userMessage');
+  if (input) {
+    input.value = question;
+    sendMessage();
+  }
+};
 
 // ===== ADD MESSAGE TO CHAT =====
-function addChatMessage(sender, message) {
-  const chatDiv = document.getElementById('chatHistory');
-  const isUser = sender === 'user';
+window.addChatMessage = function(sender, message) {
+  var chatDiv = document.getElementById('chatHistory');
+  if (!chatDiv) {
+    alert("ERROR: Chat display not found!");
+    return;
+  }
   
-  const messageDiv = document.createElement('div');
-  messageDiv.className = 'tip-card';
-  messageDiv.style.background = isUser ? 'rgba(255,107,157,0.2)' : 'rgba(78,205,196,0.2)';
-  messageDiv.style.marginBottom = '12px';
-  messageDiv.style.animation = 'fadeIn 0.3s ease';
+  var isUser = sender === 'user';
+  var messageDiv = document.createElement('div');
   
-  messageDiv.innerHTML = `
-    <strong>${isUser ? '👤 You' : '🤖 Assistant'}:</strong><br>
-    ${message.replace(/\n/g, '<br>')}
-  `;
+  messageDiv.style.cssText = 'background:' + (isUser ? 'rgba(255,107,157,0.25)' : 'rgba(78,205,196,0.25)') + ';' +
+    'padding:16px;' +
+    'border-radius:12px;' +
+    'margin-bottom:12px;' +
+    'animation:fadeIn 0.3s ease;' +
+    'border-left:4px solid ' + (isUser ? 'var(--accent)' : 'var(--accent2)');
   
+  var header = document.createElement('strong');
+  header.style.cssText = 'color:' + (isUser ? 'var(--accent)' : 'var(--accent2)') + ';font-size:15px;display:block;margin-bottom:8px';
+  header.textContent = isUser ? '👤 You' : '🤖 AI Assistant';
+  
+  var content = document.createElement('div');
+  content.style.cssText = 'color:#f0f4f8;font-size:14px;line-height:1.6;white-space:pre-wrap';
+  content.textContent = message;
+  
+  messageDiv.appendChild(header);
+  messageDiv.appendChild(content);
   chatDiv.appendChild(messageDiv);
   chatDiv.scrollTop = chatDiv.scrollHeight;
   
-  chatHistory.push({ 
-    sender, 
-    message, 
-    time: new Date().toLocaleString(),
-    score: calculateScore(),
-    steps: state.steps,
-    water: state.water
+  chatHistory.push({
+    sender: sender,
+    message: message,
+    time: new Date().toLocaleString()
   });
-}
+};
 
-// ===== ENTER KEY TO SEND =====
-document.addEventListener('DOMContentLoaded', function() {
-  const textarea = document.getElementById('userMessage');
+// ===== KEYBOARD SHORTCUT =====
+setTimeout(function() {
+  var textarea = document.getElementById('userMessage');
   if (textarea) {
     textarea.addEventListener('keydown', function(e) {
       if (e.key === 'Enter' && !e.shiftKey) {
@@ -1611,6 +1445,9 @@ document.addEventListener('DOMContentLoaded', function() {
         sendMessage();
       }
     });
+    console.log("✅ Chatbot ready! Type a message or click a button.");
   }
-});
+}, 1000);
+
+console.log("✅ Chatbot loaded successfully!");
 );
