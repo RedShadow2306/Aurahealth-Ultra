@@ -797,37 +797,61 @@ select{
       🌟 <strong>Wellness Warrior</strong> - Reach 80+ wellness score
     </div>
   </div>
-  <section id="chat" class="page">
+ <!-- AI CHATBOT PAGE -->
+<section id="chat" class="page">
   <div class="card">
-    <h2>🤖 Health Assistant</h2>
-    <p class="small" style="margin-bottom:16px">Your personal AI health coach - 100% private, runs locally on your device</p>
+    <h2>🤖 AI Health Assistant</h2>
+    <p class="small" style="margin-bottom:16px">Ask questions and get instant health advice - 100% private!</p>
     
-    <div id="chatHistory" style="max-height:400px;overflow-y:auto;margin-bottom:16px;padding:12px;background:rgba(0,0,0,0.2);border-radius:12px;min-height:200px;">
-      <div class="tip-card" style="background:rgba(78,205,196,0.2)">
-        <strong>🤖 Assistant:</strong><br>
-        Hi! I'm your personal health assistant. I can help you with:<br>
-        • Exercise and activity advice<br>
-        • Nutrition and hydration tips<br>
-        • Mood and mental wellness<br>
-        • Goal tracking and motivation<br>
-        <br>
-        <em>Try asking: "Should I exercise?", "Am I hydrated?", "Analyze my mood"</em>
+    <!-- CLEAR CHAT DISPLAY AREA -->
+    <div style="background:rgba(0,0,0,0.3);border-radius:16px;padding:16px;margin-bottom:16px;min-height:300px;max-height:400px;overflow-y:auto;border:2px solid rgba(78,205,196,0.3)" id="chatHistory">
+      <!-- Welcome Message -->
+      <div style="background:rgba(78,205,196,0.2);padding:16px;border-radius:12px;margin-bottom:12px;border-left:4px solid var(--accent2)">
+        <strong style="color:var(--accent2);font-size:16px">🤖 AI Assistant</strong><br><br>
+        <span style="color:#f0f4f8;font-size:15px">
+          Hi! I'm your personal health coach. I can help you with:<br><br>
+          💪 Exercise advice<br>
+          💧 Hydration tracking<br>
+          🧠 Mood analysis<br>
+          📊 Progress reports<br>
+          🍎 Nutrition tips<br>
+          🔥 Motivation<br><br>
+          <em style="color:#94a3b8">Try typing: "Should I exercise?" or click a button below!</em>
+        </span>
       </div>
     </div>
     
-    <textarea id="userMessage" placeholder="Ask me anything about your health..." rows="3" style="resize:vertical"></textarea>
-    <button onclick="sendMessage()">📤 Send Message</button>
-    
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px">
-      <button class="secondary" onclick="quickQuestion('Should I exercise today?')" style="padding:10px;font-size:12px">💪 Exercise?</button>
-      <button class="secondary" onclick="quickQuestion('Am I drinking enough water?')" style="padding:10px;font-size:12px">💧 Water check</button>
-      <button class="secondary" onclick="quickQuestion('How is my wellness score?')" style="padding:10px;font-size:12px">📊 My score</button>
-      <button class="secondary" onclick="quickQuestion('Motivate me!')" style="padding:10px;font-size:12px">🔥 Motivation</button>
+    <!-- INPUT AREA -->
+    <div style="background:rgba(0,0,0,0.2);padding:16px;border-radius:12px;margin-bottom:12px">
+      <label style="color:#4ecdc4;font-size:13px;display:block;margin-bottom:8px;font-weight:600">💬 Your Question:</label>
+      <textarea 
+        id="userMessage" 
+        placeholder="Type your question here... (Press Enter to send)" 
+        rows="3" 
+        style="resize:vertical;width:100%;margin:0"
+      ></textarea>
+      <button onclick="sendMessage()" style="margin-top:8px">📤 Send Message</button>
     </div>
     
-    <p class="small" style="margin-top:12px;text-align:center;color:#4ecdc4">
-      🔒 100% Private • No data sent to servers • Works offline
-    </p>
+    <!-- QUICK QUESTIONS -->
+    <div style="margin-bottom:12px">
+      <p style="color:#94a3b8;font-size:13px;margin-bottom:8px;font-weight:600">⚡ Quick Questions:</p>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px">
+        <button class="secondary" onclick="quickQuestion('Should I exercise today?')" style="padding:12px;font-size:13px">💪 Exercise?</button>
+        <button class="secondary" onclick="quickQuestion('Am I drinking enough water?')" style="padding:12px;font-size:13px">💧 Water check</button>
+        <button class="secondary" onclick="quickQuestion('How is my wellness score?')" style="padding:12px;font-size:13px">📊 My score</button>
+        <button class="secondary" onclick="quickQuestion('Motivate me!')" style="padding:12px;font-size:13px">🔥 Motivation</button>
+        <button class="secondary" onclick="quickQuestion('What should I eat?')" style="padding:12px;font-size:13px">🍎 Nutrition</button>
+        <button class="secondary" onclick="quickQuestion('Analyze my mood')" style="padding:12px;font-size:13px">🧠 Mood check</button>
+      </div>
+    </div>
+    
+    <!-- PRIVACY NOTICE -->
+    <div style="background:rgba(78,205,196,0.1);padding:12px;border-radius:12px;text-align:center">
+      <p class="small" style="color:#4ecdc4;margin:0">
+        🔒 100% Private • All processing happens on YOUR device • No data sent to servers
+      </p>
+    </div>
   </div>
 </section>
 </section>
