@@ -845,7 +845,6 @@ typingDiv.innerHTML = '🤖 Analyzing your data...';
 chatDiv.appendChild(typingDiv);
 chatDiv.scrollTop = chatDiv.scrollHeight;
 // Generate response with realistic delay
-// Generate response with realistic delay
 setTimeout(() => {
   // Remove typing indicator
   const typing = document.getElementById('typingIndicator');
@@ -859,7 +858,7 @@ setTimeout(() => {
     console.error('Chatbot error:', error);
     addChatMessage('bot', '❌ Sorry, I encountered an error analyzing your data. Please try again or check that your profile is complete.');
   }
-}, 600 + Math.random() * 400); // Random delay 600-1000ms for realism // Random delay 600-1000ms for realism
+}, 600 + Math.random() * 400); // Random delay 600-1000ms for realism
 }
 function quickQuestion(question) {
 const input = document.getElementById('userMessage');
