@@ -1,3 +1,9 @@
+// ===== SAFETY CHECK FOR MISSING FUNCTIONS =====
+if (typeof navigateTo === 'undefined') {
+  window.navigateTo = function(page) {
+    console.warn('navigateTo called but not implemented for:', page);
+  };
+}
 // ===== CHATBOT UI MANAGEMENT =====
 function toggleChatbot() {
   const panel = document.getElementById('chatbotPanel');
