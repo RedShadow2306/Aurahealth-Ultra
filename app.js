@@ -1,4 +1,44 @@
-// ===== AURAHEALTH ULTRA - COMPLETE JavaScript =====
+// ===== PAGE NAVIGATION SYSTEM =====
+function navigateTo(pageId) {
+  console.log('🔄 Navigating to:', pageId);
+  
+  // Hide all pages
+  const pages = document.querySelectorAll('.page, [id$="-page"], [id$="Page"]');
+  pages.forEach(page => {
+    page.style.display = 'none';
+  });
+  
+  // Show target page
+  const targetPage = document.getElementById(pageId) || 
+                     document.getElementById(pageId + '-page') || 
+                     document.getElementById(pageId + 'Page');
+  
+  if (targetPage) {
+    targetPage.style.display = 'block';
+    console.log('✅ Navigated to:', pageId);
+  } else {
+    console.error('❌ Page not found:', pageId);
+    // Try to show dashboard as fallback
+    const dashboard = document.getElementById('dash') || 
+                      document.getElementById('dashboard') ||
+                      document.getElementById('dash-page');
+    if (dashboard) {
+      dashboard.style.display = 'block';
+    }
+  }
+  
+  // Update active nav button (if you have nav buttons)
+  const navButtons = document.querySelectorAll('.nav-btn, [onclick*="navigateTo"]');
+  navButtons.forEach(btn => {
+    btn.classList.remove('active');
+    if (btn.getAttribute('onclick')?.includes(`'${pageId}'`)) {
+      btn.classList.add('active');
+    }
+  });
+}
+
+// Make it globally accessible
+window.navigateTo = navigateTo;// ===== AURAHEALTH ULTRA - COMPLETE JavaScript =====
 // ===== WEATHER CONFIG =====
 const WEATHER_CONFIG = {
   API_KEY: "6f731853752fe3afc0bfa077a1b08a15",
