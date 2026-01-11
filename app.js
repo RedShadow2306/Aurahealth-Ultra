@@ -199,9 +199,9 @@ function generateChatbotResponse(userMessage) {
       }
       
       // Weather adjustments
-      if (weather && weather.temp !== null) {
-        response += `\n🌡️ Weather adjustment:\n`;
-        if (weather.temp > 30) {
+if (weather && weather.temp !== null && weather.temp !== undefined) {
+  response += `\n🌡️ Weather adjustment:\n`;
+  if (weather.temp > 30) {
           response += `Hot weather (${weather.temp}°C) - Increase to 10-12 glasses!\nYou lose more water through sweat.`;
         } else if (weather.temp < 15) {
           response += `Cold weather (${weather.temp}°C) - Still drink 8 glasses.\nCold reduces thirst but you still need water.`;
@@ -222,12 +222,15 @@ function generateChatbotResponse(userMessage) {
     },
     
     mood: () => {
-      if (state.moods.length === 0) {
-        return `🧠 MOOD TRACKING\n\n❌ No mood entries yet!\n\nStart tracking to:\n✓ Understand emotional patterns\n✓ Identify triggers\n✓ Improve mental wellness\n✓ Track progress over time\n\n→ Go to Mood page to log your first entry!\n\n💡 Tip: Track mood 2-3 times daily for best insights.`;
-      }
-      
-      let response = `🧠 EMOTIONAL WELLNESS ANALYSIS\n\n`;
-      const latest = state.moods[state.moods.length - 1];
+  if (!state.moods || state.moods.length === 0) {
+    return `🧠 MOOD TRACKING\n\n❌ No mood entries yet!\n\nStart tracking to:\n✓ Understand emotional patterns\n✓ Identify triggers\n✓ Improve mental wellness\n✓ Track progress over time\n\n→ Go to Mood page to log your first entry!\n\n💡 Tip: Track mood 2-3 times daily for best insights.`;
+  }
+  
+  let response = `🧠 EMOTIONAL WELLNESS ANALYSIS\n\n`;
+  const latest = state.moods[state.moods.length - 1];
+  if (!latest) {
+    return `🧠 MOOD TRACKING\n\n❌ Unable to read mood data. Please try logging a new mood entry.`;
+  }
       response += `📊 Latest: ${latest.mood}\n`;
       response += `📅 Total entries: ${state.moods.length}\n`;
       response += `🕐 Last logged: ${new Date(latest.timestamp).toLocaleString()}\n\n`;
@@ -787,8 +790,8 @@ weather: () => {
     response += `Moderate weather - 8 glasses target\n`;
   }
   
-  if (weather.humidity > 70) {
-    response += `\nHigh humidity (${weather.humidity}%):\n`;
+if (weather.humidity !== null && weather.humidity !== undefined && weather.humidity > 70) {
+  response += `\nHigh humidity (${weather.humidity}%):\n`;
     response += `→ You'll sweat more\n`;
     response += `→ Drink extra fluids\n`;
   }
@@ -842,14 +845,21 @@ typingDiv.innerHTML = '🤖 Analyzing your data...';
 chatDiv.appendChild(typingDiv);
 chatDiv.scrollTop = chatDiv.scrollHeight;
 // Generate response with realistic delay
+// Generate response with realistic delay
 setTimeout(() => {
-// Remove typing indicator
-const typing = document.getElementById('typingIndicator');
-if (typing) typing.remove();
-// Generate and show bot response
-const response = generateChatbotResponse(message);
-addChatMessage('bot', response);
-}, 600 + Math.random() * 400); // Random delay 600-1000ms for realism
+  // Remove typing indicator
+  const typing = document.getElementById('typingIndicator');
+  if (typing) typing.remove();
+  
+  // Generate and show bot response
+  try {
+    const response = generateChatbotResponse(message);
+    addChatMessage('bot', response);
+  } catch (error) {
+    console.error('Chatbot error:', error);
+    addChatMessage('bot', '❌ Sorry, I encountered an error analyzing your data. Please try again or check that your profile is complete.');
+  }
+}, 600 + Math.random() * 400); // Random delay 600-1000ms for realism // Random delay 600-1000ms for realism
 }
 function quickQuestion(question) {
 const input = document.getElementById('userMessage');
@@ -863,9 +873,21 @@ const chatDiv = document.getElementById('chatHistory');
 if (!chatDiv) return;
 const isUser = sender === 'user';
 const messageDiv = document.createElement('div');
-messageDiv.style.cssText =     background: ${isUser ? 'rgba(255,107,157,0.2)' : 'rgba(78,205,196,0.2)'};     padding: 16px;     border-radius: 12px;     margin-bottom: 12px;     animation: fadeIn 0.3s ease;     border-left: 4px solid ${isUser ? 'var(--accent)' : 'var(--accent2)'};  ;
+messageDiv.style.cssText = `
+  background: ${isUser ? 'rgba(255,107,157,0.2)' : 'rgba(78,205,196,0.2)'};
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  animation: fadeIn 0.3s ease;
+  border-left: 4px solid ${isUser ? 'var(--accent)' : 'var(--accent2)'};
+`;
 const header = document.createElement('strong');
-header.style.cssText = color: ${isUser ? 'var(--accent)' : 'var(--accent2)'};font-size:14px;display:block;margin-bottom:8px;;
+header.style.cssText = `
+  color: ${isUser ? 'var(--accent)' : 'var(--accent2)'};
+  font-size: 14px;
+  display: block;
+  margin-bottom: 8px;
+`;
 header.textContent = isUser ? '👤 You' : '🤖 Health Assistant';
 const content = document.createElement('div');
 content.style.cssText = 'color:#f0f4f8;font-size:14px;line-height:1.7;white-space:pre-wrap;word-wrap:break-word;';
