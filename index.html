@@ -2,1084 +2,754 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AuraHealth Ultra</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AuraHealth Ultra - Your Personal Wellness Companion</title>
 <style>
-:root{
-  --bg1:#0a0e27;
-  --bg2:#1a1f3a;
-  --bg3:#2d1b4e;
-  --card:rgba(255,255,255,0.12);
-  --accent:#ff6b9d;
-  --accent2:#4ecdc4;
-  --text:#f0f4f8;
-  --shadow:rgba(0,0,0,0.4);
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --accent: #ff6b9d;
+  --accent2: #4ecdc4;
+  --text: #f0f4f8;
+  --text-muted: #94a3b8;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,'Helvetica Neue',sans-serif;
-  min-height:100vh;
-  background:#0a0e27;
-  background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
-  color:var(--text);
-  overflow-x:hidden;
-  -webkit-font-smoothing:antialiased;
-  -moz-osx-font-smoothing:grayscale;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
-.page{
-  display:none;
-  padding:20px 20px 100px;
-  animation:fadeIn 0.4s ease;
-  -webkit-animation:fadeIn 0.4s ease;
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
-.active{display:block}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-.card{
-  background:var(--card);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  border-radius:24px;
-  padding:24px;
-  margin-bottom:16px;
-  box-shadow:0 8px 32px var(--shadow);
-  border:1px solid rgba(255,255,255,0.1);
-  transition:transform 0.3s ease,box-shadow 0.3s ease;
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  padding-bottom: 100px;
 }
-.card:hover{transform:translateY(-2px);box-shadow:0 12px 40px var(--shadow)}
-.center{text-align:center}
-h1{font-size:32px;margin-bottom:12px;font-weight:700}
-h2{font-size:24px;margin-bottom:16px;font-weight:600}
-h3{font-size:18px;margin-bottom:12px;font-weight:600}
-h4{font-size:16px;margin-bottom:10px;font-weight:600;color:var(--accent2)}
-.small{font-size:13px;color:#cbd5e1;margin-top:8px}
-button{
-  width:100%;
-  padding:16px;
-  border:none;
-  border-radius:16px;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  color:#fff;
-  font-weight:700;
-  font-size:15px;
-  cursor:pointer;
-  margin-top:12px;
-  transition:all 0.3s ease;
-  box-shadow:0 4px 15px rgba(255,107,157,0.3);
-  text-transform:uppercase;
-  letter-spacing:0.5px;
-  -webkit-appearance:none;
-  -moz-appearance:none;
-  appearance:none;
+
+.header {
+  text-align: center;
+  padding: 30px 20px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+  border-radius: 20px;
+  margin-bottom: 30px;
+  box-shadow: 0 10px 30px rgba(255,107,157,0.3);
 }
-button:hover{transform:translateY(-3px);box-shadow:0 8px 25px rgba(255,107,157,0.5)}
-button:active{transform:translateY(0)}
-button.secondary{
-  background:rgba(255,255,255,0.1);
-  box-shadow:none;
+
+.header h1 {
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
-input,select,textarea{
-  width:100%;
-  padding:14px;
-  margin:8px 0;
-  border:2px solid rgba(255,255,255,0.1);
-  border-radius:12px;
-  background:rgba(10,14,39,0.6);
-  color:#fff;
-  font-size:15px;
-  transition:border 0.3s ease;
-  -webkit-appearance:none;
-  -moz-appearance:none;
-  appearance:none;
+
+.header p {
+  font-size: 1.1em;
+  opacity: 0.95;
 }
-input:focus,select:focus,textarea:focus{
-  outline:none;
-  border-color:var(--accent2);
+
+.nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 10px;
+  margin-bottom: 30px;
+  position: sticky;
+  top: 10px;
+  z-index: 100;
+  background: var(--bg);
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
 }
-select{
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23fff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;
-  background-position:right 12px center;
-  padding-right:36px;
+
+.nav button {
+  background: var(--card);
+  border: 2px solid transparent;
+  color: var(--text);
+  padding: 12px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.9em;
+  font-weight: 600;
 }
-.progress{
-  height:12px;
-  background:rgba(255,255,255,0.1);
-  border-radius:20px;
-  overflow:hidden;
-  margin-top:12px;
-  box-shadow:inset 0 2px 4px rgba(0,0,0,0.2);
+
+.nav button:hover {
+  background: rgba(78,205,196,0.2);
+  border-color: var(--accent2);
+  transform: translateY(-2px);
 }
-.progress-bar{
-  height:100%;
-  width:0;
-  background:linear-gradient(90deg,var(--accent2),var(--accent));
-  transition:width 0.6s cubic-bezier(0.4,0,0.2,1);
-  border-radius:20px;
-  position:relative;
+
+.nav button.active-nav {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+  border-color: var(--accent);
 }
-.progress-bar::after{
-  content:'';
-  position:absolute;
-  top:0;right:0;bottom:0;left:0;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);
-  animation:shimmer 2s infinite;
-  -webkit-animation:shimmer 2s infinite;
+
+.page {
+  display: none;
 }
-@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
-.nav{
-  position:fixed;
-  bottom:0;left:0;right:0;
-  display:flex;
-  justify-content:space-around;
-  background:rgba(10,14,39,0.95);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  padding:12px 8px;
-  z-index:999;
-  border-top:1px solid rgba(255,255,255,0.1);
+
+.page.active {
+  display: block;
+  animation: fadeIn 0.4s ease;
 }
-.nav button{
-  background:none;
-  color:#94a3b8;
-  font-size:24px;
-  width:auto;
-  padding:8px 16px;
-  margin:0;
-  box-shadow:none;
-  text-transform:none;
-  letter-spacing:0;
-  transition:all 0.3s;
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-.nav button:hover{
-  color:var(--accent2);
-  transform:translateY(-4px);
+
+.card {
+  background: var(--card);
+  border-radius: 15px;
+  padding: 25px;
+  margin-bottom: 20px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  border: 1px solid rgba(78,205,196,0.1);
 }
-.nav button.active-nav{
-  color:var(--accent2);
-  background:rgba(78,205,196,0.15);
-  border-radius:12px;
+
+.card h2, .card h3 {
+  color: var(--accent2);
+  margin-bottom: 15px;
 }
-.badge{
-  display:inline-block;
-  padding:8px 16px;
-  border-radius:20px;
-  background:linear-gradient(135deg,var(--accent2),var(--accent));
-  color:#fff;
-  font-size:13px;
-  font-weight:600;
-  margin:6px;
-  box-shadow:0 4px 12px rgba(78,205,196,0.3);
-  animation:pulse 2s infinite;
-  -webkit-animation:pulse 2s infinite;
+
+.form-group {
+  margin-bottom: 20px;
 }
-.avatar{
-  width:140px;
-  height:140px;
-  border-radius:50%;
-  margin:20px auto;
-  background-size:cover;
-  background-position:center;
-  border:4px solid var(--accent2);
-  box-shadow:0 8px 32px rgba(78,205,196,0.4);
-  background-color:rgba(78,205,196,0.2);
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-muted);
+  font-weight: 600;
 }
-.tip-card{
-  background:rgba(255,255,255,0.08);
-  padding:16px;
-  border-radius:16px;
-  margin-bottom:12px;
-  border-left:4px solid var(--accent2);
-  transition:all 0.3s;
+
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%;
+  padding: 12px;
+  background: rgba(15,23,42,0.5);
+  border: 2px solid rgba(78,205,196,0.3);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 1em;
+  transition: all 0.3s;
 }
-.tip-card:hover{
-  background:rgba(255,255,255,0.12);
-  transform:translateX(4px);
+
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent2);
+  box-shadow: 0 0 0 3px rgba(78,205,196,0.1);
 }
-.tip-card strong{
-  color:var(--accent2);
-  display:block;
-  margin-bottom:8px;
-  font-size:14px;
+
+.btn {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 700;
+  transition: all 0.3s;
+  box-shadow: 0 5px 15px rgba(255,107,157,0.3);
 }
-.hero{
-  text-align:center;
-  padding:48px 24px 32px;
-  background:linear-gradient(180deg,rgba(255,107,157,0.2),transparent);
-  border-radius:0 0 40px 40px;
-  margin:-20px -20px 24px;
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 7px 20px rgba(255,107,157,0.4);
 }
-.hero h1{
-  font-size:48px;
-  margin-bottom:12px;
-  background:linear-gradient(135deg,var(--accent),var(--accent2));
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  background-clip:text;
-  animation:pulse 3s infinite;
+
+.btn:active {
+  transform: translateY(0);
 }
-.hero p{
-  font-size:18px;
-  color:#cbd5e1;
-  margin-bottom:24px;
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 25px;
 }
-.feature-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-  gap:16px;
-  margin-bottom:24px;
+
+.stat-card {
+  background: linear-gradient(135deg, rgba(255,107,157,0.15) 0%, rgba(78,205,196,0.15) 100%);
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  border: 2px solid rgba(78,205,196,0.2);
 }
-.feature-card{
-  background:var(--card);
-  backdrop-filter:blur(20px);
-  -webkit-backdrop-filter:blur(20px);
-  border-radius:20px;
-  padding:24px;
-  text-align:center;
-  cursor:pointer;
-  transition:all 0.4s cubic-bezier(0.4,0,0.2,1);
-  border:2px solid transparent;
-  -webkit-tap-highlight-color:transparent;
+
+.stat-card .value {
+  font-size: 2.5em;
+  font-weight: 900;
+  color: var(--accent2);
+  margin: 10px 0;
 }
-.feature-card:hover{
-  transform:translateY(-8px) scale(1.02);
-  box-shadow:0 20px 40px rgba(78,205,196,0.4);
-  border-color:var(--accent2);
-  background:rgba(255,255,255,0.18);
+
+.stat-card .label {
+  color: var(--text-muted);
+  font-size: 0.9em;
+  font-weight: 600;
 }
-.feature-card:active{
-  transform:translateY(-4px) scale(1.01);
+
+.progress-bar {
+  background: rgba(15,23,42,0.5);
+  border-radius: 10px;
+  height: 12px;
+  overflow: hidden;
+  margin: 10px 0;
 }
-.feature-card .icon{
-  font-size:42px;
-  margin-bottom:12px;
-  filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+
+.progress-fill {
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent2) 100%);
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.5s ease;
 }
-.feature-card h3{
-  font-size:16px;
-  margin-bottom:6px;
-  color:var(--text);
+
+.tip-card {
+  background: rgba(78,205,196,0.1);
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  border-left: 4px solid var(--accent2);
+  line-height: 1.6;
 }
-.feature-card p{
-  font-size:12px;
-  color:#94a3b8;
-  margin:0;
+
+.alert {
+  background: rgba(255,107,157,0.2);
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  border-left: 4px solid var(--accent);
 }
-.stats-row{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-  gap:16px;
-  margin-bottom:24px;
+
+.alert.success {
+  background: rgba(78,205,196,0.2);
+  border-left-color: var(--accent2);
 }
-.stat-box{
-  background:rgba(255,255,255,0.1);
-  padding:20px;
-  border-radius:20px;
-  text-align:center;
-  border:1px solid rgba(255,255,255,0.1);
-  transition:all 0.3s;
+
+.badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+  padding: 8px 15px;
+  border-radius: 20px;
+  margin: 5px;
+  font-weight: 700;
+  font-size: 0.9em;
 }
-.stat-box:hover{
-  background:rgba(255,255,255,0.15);
-  transform:translateY(-4px);
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 20px;
 }
-.stat-box .number{
-  font-size:36px;
-  font-weight:800;
-  color:var(--accent2);
-  display:block;
-  text-shadow:0 2px 8px rgba(78,205,196,0.5);
+
+.quick-btn {
+  background: rgba(78,205,196,0.2);
+  border: 2px solid var(--accent2);
+  color: var(--text);
+  padding: 15px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  text-align: center;
 }
-.stat-box .label{
-  font-size:12px;
-  color:#94a3b8;
-  margin-top:8px;
-  text-transform:uppercase;
-  letter-spacing:1px;
+
+.quick-btn:hover {
+  background: rgba(78,205,196,0.3);
+  transform: scale(1.05);
 }
-.quick-action{
-  background:linear-gradient(135deg,rgba(78,205,196,0.15),rgba(255,107,157,0.15));
-  border-radius:24px;
-  padding:24px;
-  margin-bottom:24px;
-  border:1px solid rgba(78,205,196,0.3);
+
+#chatbotIcon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 30px;
+  box-shadow: 0 5px 20px rgba(255,107,157,0.4);
+  z-index: 1000;
+  transition: all 0.3s;
 }
-.quick-action h3{
-  font-size:20px;
-  margin-bottom:16px;
-  color:var(--accent2);
+
+#chatbotIcon:hover {
+  transform: scale(1.1) rotate(10deg);
 }
-.action-buttons{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:12px;
+
+#chatbotPanel {
+  position: fixed;
+  bottom: -100%;
+  right: 0;
+  width: 100%;
+  max-width: 450px;
+  height: 70vh;
+  max-height: 600px;
+  background: var(--card);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -5px 30px rgba(0,0,0,0.5);
+  z-index: 999;
+  transition: bottom 0.4s ease;
+  display: flex;
+  flex-direction: column;
 }
-.action-buttons button{
-  padding:14px;
-  font-size:13px;
-  margin:0;
+
+#chatbotPanel.open {
+  bottom: 0;
 }
-.alert{
-  background:rgba(255,107,157,0.2);
-  border:1px solid var(--accent);
-  padding:16px;
-  border-radius:16px;
-  margin:16px 0;
-  color:var(--text);
+
+.chat-header {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+  padding: 20px;
+  border-radius: 20px 20px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-.success{
-  background:rgba(78,205,196,0.2);
-  border-color:var(--accent2);
+
+.chat-header h3 {
+  margin: 0;
+  font-size: 1.3em;
 }
-.info-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:12px 0;
-  border-bottom:1px solid rgba(255,255,255,0.1);
+
+.close-chat {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  transition: all 0.3s;
 }
-.info-row:last-child{border-bottom:none}
-.info-label{
-  color:#94a3b8;
-  font-size:14px;
+
+.close-chat:hover {
+  background: rgba(255,255,255,0.3);
+  transform: rotate(90deg);
 }
-.info-value{
-  color:var(--accent2);
-  font-weight:600;
-  font-size:16px;
+
+#chatHistory {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
 }
-.completed{
-  background:rgba(78,205,196,0.2);
-  border:2px solid var(--accent2);
+
+.chat-input-area {
+  padding: 15px;
+  background: rgba(15,23,42,0.5);
+  border-top: 1px solid rgba(78,205,196,0.2);
 }
-#weatherCard{
-  background:rgba(255,255,255,0.08);
-  padding:16px;
-  border-radius:16px;
-  margin-top:16px;
-  border:1px solid rgba(255,255,255,0.1);
+
+#userMessage {
+  width: 100%;
+  padding: 12px;
+  background: rgba(15,23,42,0.7);
+  border: 2px solid rgba(78,205,196,0.3);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 1em;
+  resize: none;
+  font-family: inherit;
+}
+
+.quick-questions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+
+.quick-q-btn {
+  background: rgba(78,205,196,0.2);
+  border: 1px solid var(--accent2);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 0.85em;
+  white-space: nowrap;
+  transition: all 0.3s;
+}
+
+.quick-q-btn:hover {
+  background: rgba(78,205,196,0.3);
+}
+
+@media (max-width: 768px) {
+  .header h1 { font-size: 1.8em; }
+  .header p { font-size: 0.95em; }
+  .nav { grid-template-columns: repeat(4, 1fr); font-size: 0.85em; }
+  #chatbotPanel { max-width: 100%; }
 }
 </style>
 </head>
 <body>
 
-<!-- MAIN DASHBOARD -->
-<section id="main" class="page active">
-  <div class="hero">
-    <h1>✨ AuraHealth Ultra</h1>
-    <p>Your Complete Wellness Companion</p>
+<div class="container">
+  <div class="header">
+    <h1>🌟 AuraHealth Ultra</h1>
+    <p id="welcome">Your Personal Wellness Companion</p>
   </div>
 
-  <div style="padding:0 20px">
-    <div class="stats-row" id="statsRow" style="display:none">
-      <div class="stat-box">
-        <span class="number" id="mainScore">0</span>
-        <span class="label">Wellness Score</span>
-      </div>
-      <div class="stat-box">
-        <span class="number" id="mainSteps">0</span>
-        <span class="label">Steps Today</span>
-      </div>
-      <div class="stat-box">
-        <span class="number" id="mainWater">0</span>
-        <span class="label">Water Glasses</span>
-      </div>
-    </div>
+  <div class="nav">
+    <button id="navDash" onclick="navigateTo('dash')" class="active-nav">Dashboard</button>
+    <button id="navProfile" onclick="navigateTo('profile')">Profile</button>
+    <button id="navActivity" onclick="navigateTo('activity')">Activity</button>
+    <button id="navHealth" onclick="navigateTo('health')">Health</button>
+    <button id="navNutrition" onclick="navigateTo('nutrition')">Nutrition</button>
+    <button id="navMood" onclick="navigateTo('mood')">Mood</button>
+    <button id="navQuiz" onclick="navigateTo('quiz')">Quiz</button>
+    <button id="navGuidance" onclick="navigateTo('guidance')">Guidance</button>
+  </div>
 
-    <div class="quick-action" id="quickActions" style="display:none">
-      <h3>⚡ Quick Actions</h3>
-      <div class="action-buttons">
-        <button onclick="navigateTo('activity')">🚶 Log Activity</button>
-        <button onclick="navigateTo('nutrition')">💧 Add Water</button>
-        <button onclick="navigateTo('mood')">😊 Track Mood</button>
-        <button onclick="refreshGuidance();navigateTo('dash')">🌟 View Dashboard</button>
-      </div>
-    </div>
-
-    <!-- Weather Feature -->
+  <!-- DASHBOARD PAGE -->
+  <div id="dash" class="page active">
     <div class="card">
-      <h3>🌤️ Local Weather</h3>
-      <p class="small" style="margin-bottom:12px">Get personalized health tips based on your local weather</p>
-      <input id="weatherPincode" type="text" placeholder="Enter Indian Pincode (e.g., 110001)" maxlength="6">
-      <button onclick="fetchWeather()">🔍 Get Weather</button>
-      <div id="weatherCard"></div>
+      <h2>📊 Dashboard</h2>
+      <div id="statsRow" style="display:none;">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="label">Wellness Score</div>
+            <div class="value" id="mainScore">0</div>
+            <div class="progress-bar"><div class="progress-fill" id="scoreBar" style="width:0%"></div></div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Steps Today</div>
+            <div class="value" id="mainSteps">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Water Intake</div>
+            <div class="value"><span id="mainWater">0</span>/8</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card" id="profileCard" style="text-align:center;background:rgba(78,205,196,0.15)">
+        <div style="font-size:3em;margin-bottom:10px">👤</div>
+        <h3>Complete Your Profile</h3>
+        <p>Set up your profile to unlock personalized recommendations!</p>
+        <button class="btn" onclick="navigateTo('profile')" style="margin-top:15px">Get Started</button>
+      </div>
+
+      <div class="card">
+        <h3>🌤️ Weather & Location</h3>
+        <div class="form-group">
+          <label>Enter Your Pincode (India)</label>
+          <input type="text" id="weatherPincode" placeholder="e.g., 110001" maxlength="6">
+          <button class="btn" onclick="fetchWeather()" style="margin-top:10px;width:100%">Get Weather</button>
+        </div>
+        <div id="weatherCard" style="margin-top:20px;padding:20px;background:rgba(78,205,196,0.1);border-radius:12px;text-align:center">
+          <p style="color:#94a3b8">Enter your pincode to see weather-based health recommendations</p>
+        </div>
+      </div>
+
+      <div id="quickActions" style="display:none;">
+        <h3 style="margin:20px 0 15px 0;color:var(--accent2)">⚡ Quick Actions</h3>
+        <div class="quick-actions">
+          <div class="quick-btn" onclick="navigateTo('activity')">🏃 Log Activity</div>
+          <div class="quick-btn" onclick="drinkWater()">💧 Drink Water</div>
+          <div class="quick-btn" onclick="navigateTo('mood')">😊 Log Mood</div>
+          <div class="quick-btn" onclick="navigateTo('nutrition')">🍎 Add Meal</div>
+        </div>
+      </div>
+
+      <div id="femaleBox" style="display:none;margin-top:20px">
+        <div class="card" style="background:rgba(255,107,157,0.15)">
+          <h3>💖 Women's Health</h3>
+          <p id="cycleInfo" style="margin-bottom:10px;color:var(--text-muted)">Track your cycle</p>
+          <p id="phaseInfo" style="color:var(--accent)"></p>
+          <button class="btn" onclick="navigateTo('health')" style="margin-top:10px">Manage Cycle</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🏆 Achievements</h3>
+        <div id="badges"></div>
+        <p id="noBadges" style="color:#64748b;text-align:center;padding:20px">Complete activities to earn badges!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROFILE PAGE -->
+  <div id="profile" class="page">
+    <div class="card">
+      <h2>👤 Your Profile</h2>
+      <div class="form-group">
+        <label>Name *</label>
+        <input type="text" id="name" placeholder="Enter your name">
+      </div>
+      <div class="form-group">
+        <label>Age *</label>
+        <input type="number" id="age" placeholder="Enter your age" min="1" max="120">
+      </div>
+      <div class="form-group">
+        <label>Gender *</label>
+        <select id="gender">
+          <option value="">Select</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Height (cm) *</label>
+        <input type="number" id="height" placeholder="e.g., 170" min="50" max="250">
+      </div>
+      <div class="form-group">
+        <label>Weight (kg) *</label>
+        <input type="number" id="weight" placeholder="e.g., 70" min="20" max="300">
+      </div>
+      <div class="form-group">
+        <label>Blood Group</label>
+        <select id="blood">
+          <option value="">Select</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Health Issue (if any)</label>
+        <select id="healthIssue">
+          <option value="">None</option>
+          <option value="BP">Blood Pressure</option>
+          <option value="Diabetes">Diabetes</option>
+          <option value="PCOS">PCOS</option>
+          <option value="Thyroid">Thyroid</option>
+          <option value="Asthma">Asthma</option>
+          <option value="Heart">Heart Issue</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Primary Goal</label>
+        <select id="goal">
+          <option value="">Select</option>
+          <option value="Weight Loss">Weight Loss</option>
+          <option value="Muscle Gain">Muscle Gain</option>
+          <option value="Mental Peace">Mental Peace</option>
+          <option value="Healthy Lifestyle">Healthy Lifestyle</option>
+          <option value="Disease Management">Disease Management</option>
+        </select>
+      </div>
+      <button class="btn" onclick="saveProfile()" style="width:100%">Save Profile</button>
+    </div>
+  </div>
+
+  <!-- ACTIVITY PAGE -->
+  <div id="activity" class="page">
+    <div class="card">
+      <h2>🏃 Activity Tracker</h2>
+      <div class="stat-card">
+        <div class="label">Today's Steps</div>
+        <div class="value" id="stepDisplay">0</div>
+        <div class="progress-bar"><div class="progress-fill" id="stepBar" style="width:0%"></div></div>
+        <p style="color:var(--text-muted);margin-top:10px">Goal: 8,000 steps</p>
+      </div>
+      
+      <h3 style="margin-top:30px;margin-bottom:15px;color:var(--accent2)">Log Activity</h3>
+      <div class="form-group">
+        <label>Activity Type</label>
+        <select id="workType">
+          <option value="Walking">Walking</option>
+          <option value="Running">Running</option>
+          <option value="Cycling">Cycling</option>
+          <option value="Gym">Gym</option>
+          <option value="Yoga">Yoga</option>
+          <option value="Swimming">Swimming</option>
+          <option value="Dance">Dance</option>
+          <option value="Sports">Sports</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Duration (minutes)</label>
+        <input type="number" id="minutes" placeholder="e.g., 30" min="1">
+      </div>
+      <button class="btn" onclick="logActivity()" style="width:100%">Log Activity</button>
+
+      <h3 style="margin-top:30px;margin-bottom:15px;color:var(--accent2)">Activity History</h3>
+      <div id="activityLog"></div>
+    </div>
+  </div>
+
+  <!-- HEALTH PAGE -->
+  <div id="health" class="page">
+    <div class="card">
+      <h2>🩺 Health Analysis</h2>
+      <button class="btn" onclick="analyzeHealth()" style="width:100%;margin-bottom:20px">Analyze My Health</button>
+      
+      <div id="healthResults" style="display:none">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="label">BMI</div>
+            <div class="value" id="bmiValue">0</div>
+            <p id="bmiCategory" style="color:var(--accent)"></p>
+          </div>
+          <div class="stat-card">
+            <div class="label">BMR</div>
+            <div class="value" id="bmrValue">0</div>
+            <p style="color:var(--text-muted);font-size:0.85em">Base Calories/Day</p>
+          </div>
+        </div>
+        <div class="tip-card">
+          <strong>Health Risk Level:</strong> <span id="riskLevel"></span>
+        </div>
+      </div>
     </div>
 
-    <div class="feature-grid">
-      <div class="feature-card" onclick="navigateTo('profile')" id="profileCard">
-        <div class="icon">👤</div>
-        <h3>Profile</h3>
-        <p>Setup profile</p>
+    <div id="femaleDash" style="display:none">
+      <div class="card">
+        <h2>💖 Menstrual Cycle Tracker</h2>
+        <div class="form-group">
+          <label>Last Period Start Date</label>
+          <input type="date" id="periodStart">
+        </div>
+        <div class="form-group">
+          <label>Average Cycle Length (days)</label>
+          <input type="number" id="cycleLength" placeholder="28" value="28" min="21" max="35">
+        </div>
+        <button class="btn" onclick="analyzeCycle()" style="width:100%">Analyze Cycle</button>
+
+        <div id="cycleResults" style="display:none;margin-top:20px">
+          <div class="tip-card">
+            <strong>Next Period:</strong> <span id="nextPeriod"></span>
+          </div>
+          <div class="tip-card">
+            <strong>Fertile Window:</strong> <span id="fertileWindow"></span>
+          </div>
+          <div class="tip-card">
+            <strong>Current Phase:</strong> <span id="pmsPhase"></span><br>
+            <span id="cycleAdvice" style="color:var(--text-muted)"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NUTRITION PAGE -->
+  <div id="nutrition" class="page">
+    <div class="card">
+      <h2>🍎 Nutrition Tracker</h2>
+      
+      <div class="stat-card">
+        <div class="label">Water Intake</div>
+        <div class="value"><span id="waterDisplay">0/8</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="waterBar" style="width:0%"></div></div>
+        <button class="btn" onclick="drinkWater()" style="margin-top:15px">💧 Drink Water (250ml)</button>
       </div>
 
-      <div class="feature-card" onclick="navigateTo('dash')">
-        <div class="icon">📊</div>
-        <h3>Dashboard</h3>
-        <p>View stats</p>
+      <div id="bmrDisplay" style="display:none;margin-top:20px">
+        <div class="tip-card">
+          <strong>Recommended Daily Calories:</strong> <span id="recommendedCal"></span>
+        </div>
       </div>
 
-      <div class="feature-card" onclick="navigateTo('activity')">
-        <div class="icon">🏃</div>
-        <h3>Activity</h3>
-        <p>Track workouts</p>
+      <h3 style="margin-top:30px;margin-bottom:15px;color:var(--accent2)">Log Calories</h3>
+      <div class="form-group">
+        <label>Calories</label>
+        <input type="number" id="meal" placeholder="e.g., 500" min="1">
+      </div>
+      <button class="btn" onclick="addCalories()" style="width:100%">Add Calories</button>
+
+      <div class="stat-card" style="margin-top:20px">
+        <div class="label">Today's Calories</div>
+        <div class="value"><span id="calDisplay">0 kcal</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOOD PAGE -->
+  <div id="mood" class="page">
+    <div class="card">
+      <h2>😊 Mood Tracker</h2>
+      <div class="form-group">
+        <label>How are you feeling?</label>
+        <select id="moodSel">
+          <option value="😊 Happy">😊 Happy</option>
+          <option value="😌 Calm">😌 Calm</option>
+          <option value="😔 Sad">😔 Sad</option>
+          <option value="😰 Anxious">😰 Anxious</option>
+          <option value="😤 Stressed">😤 Stressed</option>
+          <option value="🔥 Motivated">🔥 Motivated</option>
+          <option value="😴 Tired">😴 Tired</option>
+          <option value="🎯 Focused">🎯 Focused</option>
+          <option value="⚡ Energetic">⚡ Energetic</option>
+        </select>
+      </div>
+      <button class="btn" onclick="logMood()" style="width:100%">Log Mood</button>
+
+      <div class="tip-card" style="margin-top:20px">
+        <strong>Current Mood:</strong> <span id="moodOut">Not logged yet</span>
       </div>
 
-      <div class="feature-card" onclick="navigateTo('health')">
-        <div class="icon">🩺</div>
-        <h3>Health</h3>
-        <p>BMI & Analysis</p>
+      <div id="moodLog" style="margin-top:20px"></div>
+
+      <div class="card" style="margin-top:20px;background:rgba(78,205,196,0.1)">
+        <h3>📊 Mood Insights</h3>
+        <p id="moodInsight">Start tracking your moods to see insights about your emotional patterns.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ PAGE -->
+  <div id="quiz" class="page">
+    <div class="card">
+      <h2>🧠 Health Knowledge Quiz</h2>
+      <p style="color:var(--text-muted);margin-bottom:20px">Test your health knowledge!</p>
+      
+      <div class="card" style="background:rgba(78,205,196,0.1)">
+        <h3 id="qNum">Question 1 of 20</h3>
+        <p id="q" style="font-size:1.1em;margin:20px 0;line-height:1.6"></p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px">
+          <button class="btn" onclick="answer(true)">✓ True</button>
+          <button class="btn" onclick="answer(false)" style="background:linear-gradient(135deg, #64748b, #475569)">✗ False</button>
+        </div>
       </div>
 
-      <div class="feature-card" onclick="navigateTo('nutrition')">
-        <div class="icon">🍎</div>
-        <h3>Nutrition</h3>
-        <p>Food & Water</p>
-      </div>
+      <div id="quizOut" style="margin-top:20px"></div>
+    </div>
+  </div>
 
-      <div class="feature-card" onclick="navigateTo('mood')">
-        <div class="icon">🧠</div>
-        <h3>Mood</h3>
-        <p>Track feelings</p>
-      </div>
-
-      <div class="feature-card" onclick="navigateTo('quiz')">
-        <div class="icon">🧩</div>
-        <h3>Quiz</h3>
-        <p>Test knowledge</p>
-      </div>
-
-      <div class="feature-card" onclick="navigateTo('ach')">
-        <div class="icon">🏆</div>
-        <h3>Achievements</h3>
-        <p>View badges</p>
-      </div>
+  <!-- GUIDANCE PAGE -->
+  <div id="guidance" class="page">
+    <div class="card">
+      <h2>🎯 Daily Guidance</h2>
+      <button class="btn" onclick="refreshGuidance()" style="width:100%;margin-bottom:20px">🔄 Refresh Recommendations</button>
+      <div id="guidanceContent"></div>
     </div>
 
     <div class="card">
-      <h3>🎯 Available Achievements</h3>
-      <div style="font-size:13px;line-height:2;color:#cbd5e1">
-        🚶 <strong>Active Champ</strong> - Log 6,000+ steps in a day<br>
-        💧 <strong>Hydration Hero</strong> - Drink 8 glasses of water in a day<br>
-        💖 <strong>Emotion Aware</strong> - Track your mood for 5 days<br>
-        🧠 <strong>Mental Master</strong> - Score 70%+ on the wellness quiz<br>
-        🏃 <strong>Fitness Enthusiast</strong> - Complete 10 activities<br>
-        🌟 <strong>Wellness Warrior</strong> - Reach 80+ wellness score
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>💡 About AuraHealth Ultra</h3>
-      <p style="font-size:15px;line-height:1.8;color:#cbd5e1;margin-bottom:16px">
-        A comprehensive wellness platform combining activity tracking, health monitoring, 
-        nutrition guidance, and mental wellness tools with intelligent personalized recommendations.
-      </p>
-      <div style="font-size:13px;color:#94a3b8;line-height:2">
-        <strong style="color:var(--accent2);font-size:14px">Premium Features:</strong><br>
-        ✓ Advanced BMI & BMR Calculator<br>
-        ✓ Smart Health Recommendations<br>
-        ✓ Activity & Mood Analytics<br>
-        ✓ Women's Health Cycle Tracker<br>
-        ✓ Mental Wellness Quiz<br>
-        ✓ Achievement & Progress System<br>
-        ✓ Local Weather Integration
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PROFILE -->
-<section id="profile" class="page">
-  <div class="card">
-    <h2>👤 Complete Your Profile</h2>
-    <p class="small" style="margin-bottom:16px">Tell us about yourself to get personalized recommendations</p>
-    
-    <input id="name" placeholder="Full Name" required>
-    <input id="age" type="number" placeholder="Age" min="1" max="120" required>
-    
-    <select id="gender" required>
-      <option value="">Select Gender</option>
-      <option value="Female">Female</option>
-      <option value="Male">Male</option>
-      <option value="Other">Other</option>
-    </select>
-    
-    <input id="height" type="number" placeholder="Height (cm)" min="50" max="250" required>
-    <input id="weight" type="number" placeholder="Weight (kg)" min="20" max="300" required>
-    
-    <select id="blood">
-      <option value="">Blood Group (Optional)</option>
-      <option>A+</option><option>A-</option>
-      <option>B+</option><option>B-</option>
-      <option>O+</option><option>O-</option>
-      <option>AB+</option><option>AB-</option>
-    </select>
-    
-    <select id="healthIssue">
-      <option value="">Health Condition (Optional)</option>
-      <option value="None">None</option>
-      <option value="BP">Blood Pressure</option>
-      <option value="Diabetes">Diabetes</option>
-      <option value="PCOS">PCOS</option>
-      <option value="Thyroid">Thyroid</option>
-      <option value="Asthma">Asthma</option>
-      <option value="Heart">Heart Condition</option>
-    </select>
-    
-    <select id="goal">
-      <option value="">Primary Wellness Goal</option>
-      <option value="Weight Loss">Weight Loss</option>
-      <option value="Muscle Gain">Muscle Gain</option>
-      <option value="Mental Peace">Mental Peace</option>
-      <option value="Healthy Lifestyle">Healthy Lifestyle</option>
-      <option value="Disease Management">Disease Management</option>
-    </select>
-    
-    <button onclick="saveProfile()">💾 Save Profile & Continue</button>
-  </div>
-</section>
-
-<!-- DASHBOARD -->
-<section id="dash" class="page">
-  <div class="card center">
-    <div class="avatar" id="dashAvatar"></div>
-    <h2 id="welcome">Welcome Back!</h2>
-    <h1 id="score">0</h1>
-    <p class="small">Overall Wellness Score</p>
-    <div class="progress"><div class="progress-bar" id="scoreBar"></div></div>
-  </div>
-
-  <div class="card">
-    <h3>📈 Today's Summary</h3>
-    <div class="info-row">
-      <span class="info-label">👣 Steps</span>
-      <span class="info-value" id="steps">0</span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">💧 Water Intake</span>
-      <span class="info-value"><span id="water">0</span>/8 glasses</span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">🔥 Calories</span>
-      <span class="info-value" id="cal">0</span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">😊 Current Mood</span>
-      <span class="info-value" id="moodOut">Not logged</span>
-    </div>
-  </div>
-
-  <div class="card" id="femaleDash" style="display:none">
-    <h3>💗 Women's Health Insight</h3>
-    <p id="cycleInfo" style="font-size:14px;margin:8px 0;color:#cbd5e1"></p>
-    <p id="phaseInfo" style="font-size:14px;margin:8px 0;color:#cbd5e1"></p>
-  </div>
-
-  <div class="card" id="dailyGuidance">
-    <h3>📋 Personalized Daily Guidance</h3>
-    <div id="guidanceContent"></div>
-    <button class="secondary" onclick="refreshGuidance()">🔄 Refresh Recommendations</button>
-  </div>
-</section>
-
-<!-- ACTIVITY -->
-<section id="activity" class="page">
-  <div class="card">
-    <h2>🏃 Activity Tracker</h2>
-    <p class="small" style="margin-bottom:16px">Log your daily physical activities</p>
-    
-    <select id="workType">
-      <option value="Walking">🚶 Walking</option>
-      <option value="Running">🏃 Running</option>
-      <option value="Cycling">🚴 Cycling</option>
-      <option value="Gym">💪 Gym Workout</option>
-      <option value="Yoga">🧘 Yoga</option>
-      <option value="Swimming">🏊 Swimming</option>
-      <option value="Dance">💃 Dancing</option>
-      <option value="Sports">⚽ Sports</option>
-    </select>
-    
-    <input id="minutes" type="number" placeholder="Duration (minutes)" min="1" max="300">
-    
-    <button onclick="logActivity()">✅ Log Activity</button>
-    
-    <div style="margin-top:20px">
-      <div class="info-row">
-        <span class="info-label">Total Steps Today</span>
-        <span class="info-value" id="stepDisplay">0</span>
-      </div>
-      <div class="progress"><div class="progress-bar" id="stepBar"></div></div>
-      <p class="small">Goal: 8,000 steps/day</p>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>📊 Activity History</h3>
-    <div id="activityLog">
-      <p style="color:#64748b;text-align:center;padding:20px">No activities logged yet</p>
-    </div>
-  </div>
-</section>
-
-<!-- HEALTH -->
-<section id="health" class="page">
-  <div class="card">
-    <h2>🩺 Health Analysis</h2>
-    <button onclick="analyzeHealth()">🔬 Calculate BMI & BMR</button>
-    
-    <div id="healthResults" style="margin-top:20px;display:none">
-      <div class="info-row">
-        <span class="info-label">BMI</span>
-        <span class="info-value" id="bmiValue">-</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Category</span>
-        <span class="info-value" id="bmiCategory">-</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">BMR (Daily Calories)</span>
-        <span class="info-value" id="bmrValue">-</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Health Risk Level</span>
-        <span class="info-value" id="riskLevel">-</span>
-      </div>
-    </div>
-
-    <div id="femaleBox" style="display:none;margin-top:24px">
-      <h3>💗 Women's Health Cycle Tracker</h3>
-      <p class="small" style="margin-bottom:12px">Track your menstrual cycle for better health insights</p>
-      
-      <label style="color:#94a3b8;font-size:13px;display:block;margin-top:12px">Last Period Start Date</label>
-      <input type="date" id="periodStart">
-      
-      <label style="color:#94a3b8;font-size:13px;display:block;margin-top:12px">Average Cycle Length (days)</label>
-      <input type="number" id="cycleLength" placeholder="28" min="21" max="35" value="28">
-      
-      <button onclick="analyzeCycle()">📅 Analyze Cycle</button>
-      
-      <div id="cycleResults" style="margin-top:16px;display:none">
-        <div class="tip-card">
-          <strong>📅 Next Period</strong>
-          <span id="nextPeriod"></span>
-        </div>
-        <div class="tip-card">
-          <strong>🌸 Fertile Window</strong>
-          <span id="fertileWindow"></span>
-        </div>
-        <div class="tip-card">
-          <strong>💫 Current Phase</strong>
-          <span id="pmsPhase"></span>
-        </div>
-        <div class="tip-card">
-          <strong>💡 Health Advice</strong>
-          <span id="cycleAdvice"></span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>🌟 Personalized Health Tips</h2>
-    <button onclick="getHealthTips()">💡 Get Smart Recommendations</button>
-    <div id="aiGuidance" style="margin-top:16px"></div>
-  </div>
-</section>
-
-<!-- NUTRITION -->
-<section id="nutrition" class="page">
-  <div class="card">
-    <h2>🍎 Nutrition Tracker</h2>
-    <p class="small" style="margin-bottom:16px">Monitor your daily calorie intake</p>
-    
-    <input id="meal" type="number" placeholder="Calories consumed" min="1" max="5000">
-    <button onclick="addCalories()">➕ Add Calories</button>
-    
-    <div style="margin-top:20px">
-      <div class="info-row">
-        <span class="info-label">Total Today</span>
-        <span class="info-value" id="calDisplay">0 kcal</span>
-      </div>
-      <div class="info-row" id="bmrDisplay" style="display:none">
-        <span class="info-label">Recommended Daily</span>
-        <span class="info-value" id="recommendedCal">- kcal</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h2>💧 Hydration Tracker</h2>
-    <p class="small" style="margin-bottom:16px">Stay hydrated throughout the day (250ml per glass)</p>
-    
-    <button onclick="drinkWater()">💧 Log 1 Glass</button>
-    
-    <div style="margin-top:20px">
-      <div class="info-row">
-        <span class="info-label">Glasses Today</span>
-        <span class="info-value" id="waterDisplay">0/8</span>
-      </div>
-      <div class="progress"><div class="progress-bar" id="waterBar"></div></div>
-      <p class="small">Goal: 8 glasses (2 liters) daily</p>
-    </div>
-  </div>
-</section>
-
-<!-- MOOD -->
-<section id="mood" class="page">
-  <div class="card">
-    <h2>🧠 Mood Tracker</h2>
-    <p class="small" style="margin-bottom:16px">Track your emotional wellbeing</p>
-    
-    <select id="moodSel">
-      <option value="😊 Happy">😊 Happy</option>
-      <option value="😌 Calm">😌 Calm</option>
-      <option value="💪 Motivated">💪 Motivated</option>
-      <option value="😫 Stressed">😫 Stressed</option>
-      <option value="😰 Anxious">😰 Anxious</option>
-      <option value="😴 Tired">😴 Tired</option>
-      <option value="😢 Sad">😢 Sad</option>
-      <option value="🎯 Focused">🎯 Focused</option>
-      <option value="😐 Neutral">😐 Neutral</option>
-      <option value="🥳 Energetic">🥳 Energetic</option>
-    </select>
-    
-    <button onclick="logMood()">✅ Log Current Mood</button>
-    
-    <div id="moodLog" style="margin-top:20px"></div>
-  </div>
-
-  <div class="card">
-    <h3>📈 Mood Insights</h3>
-    <p id="moodInsight" style="font-size:14px;line-height:1.8;color:#cbd5e1">Start tracking your moods to see insights about your emotional patterns.</p>
-  </div>
-</section>
-
-<!-- QUIZ -->
-<section id="quiz" class="page">
-  <div class="card">
-    <h2>🧩 Mental Wellness Quiz</h2>
-    <p class="small" style="margin-bottom:16px">Test your health knowledge</p>
-    
-    <p id="qNum" style="font-size:13px;color:#94a3b8;margin-bottom:12px"></p>
-    <p id="q" style="font-size:18px;line-height:1.8;margin-bottom:24px;color:#f0f4f8"></p>
-    
-    <button onclick="answer(true)">✓ True</button>
-    <button onclick="answer(false)" style="margin-top:8px">✗ False</button>
-    
-    <div id="quizOut" style="margin-top:20px"></div>
-  </div>
-</section>
-
-<!-- ACHIEVEMENTS -->
-<section id="ach" class="page">
-  <div class="card">
-    <h2>🏆 Your Achievements</h2>
-    <p class="small" style="margin-bottom:20px">Unlock badges by completing wellness milestones!</p>
-    
-    <div id="badges"></div>
-    <p id="noBadges" style="font-size:14px;color:#64748b;margin-top:16px;text-align:center">
-      🎯 No achievements yet. Start your wellness journey to earn badges! 💪
-    </p>
-  </div>
-
-  <div class="card">
-    <h3>🎯 Available Achievements</h3>
-    <div style="font-size:13px;line-height:2;color:#cbd5e1">
-      🚶 <strong>Active Champ</strong> - Log 6,000+ steps in a day<br>
-      💧 <strong>Hydration Hero</strong> - Drink 8 glasses of water in a day<br>
-      💖 <strong>Emotion Aware</strong> - Track your mood for 5 days<br>
-      🧠 <strong>Mental Master</strong> - Score 70%+ on the wellness quiz<br>
-      🏃 <strong>Fitness Enthusiast</strong> - Complete 10 activities<br>
-      🌟 <strong>Wellness Warrior</strong> - Reach 80+ wellness score
-    </div>
-  </div>
-</section>
-
-<!-- NAVIGATION -->
-<div class="nav">
-  <button onclick="navigateTo('main')" id="navMain" class="active-nav">🏠</button>
-  <button onclick="navigateTo('dash')" id="navDash">📊</button>
-  <button onclick="navigateTo('activity')" id="navActivity">🏃</button>
-  <button onclick="navigateTo('health')" id="navHealth">🩺</button>
-  <button onclick="navigateTo('nutrition')" id="navNutrition">🍎</button>
-  <button onclick="navigateTo('mood')" id="navMood">🧠</button>
-  <button onclick="navigateTo('ach')" id="navAch">🏆</button>
-</div>
-<!-- ===== OFFLINE HEALTH ASSISTANT CHATBOT ===== -->
-<div id="chatbotIcon" onclick="toggleChatbot()" style="
-  position: fixed;
-  bottom: 90px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  cursor: pointer;
-  box-shadow: 0 8px 24px rgba(255,107,157,0.5);
-  z-index: 998;
-  transition: all 0.3s ease;
-  animation: pulse 2s infinite;
-">
-  🤖
-</div>
-
-<div id="chatbotPanel" style="
-  position: fixed;
-  bottom: -100%;
-  left: 0;
-  right: 0;
-  height: 70vh;
-  max-height: 600px;
-  background: rgba(10, 14, 39, 0.98);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border-radius: 24px 24px 0 0;
-  border: 1px solid rgba(255,255,255,0.2);
-  box-shadow: 0 -8px 32px rgba(0,0,0,0.6);
-  z-index: 999;
-  transition: bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  flex-direction: column;
-">
-  <!-- Header -->
-  <div style="
-    padding: 20px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: linear-gradient(135deg, rgba(78,205,196,0.15), rgba(255,107,157,0.15));
-  ">
-    <div>
-      <h3 style="margin: 0; font-size: 20px; color: var(--accent2);">🤖 Offline Health Assistant</h3>
-      <p style="margin: 4px 0 0 0; font-size: 11px; color: #94a3b8;">🔒 100% Private - Data never leaves your device</p>
-    </div>
-    <button onclick="toggleChatbot()" style="
-      width: 36px;
-      height: 36px;
-      padding: 0;
-      margin: 0;
-      background: rgba(255,255,255,0.1);
-      border-radius: 50%;
-      font-size: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    ">✕</button>
-  </div>
-
-  <!-- Quick Actions -->
-  <div style="
-    padding: 12px 20px;
-    background: rgba(255,255,255,0.05);
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    overflow-x: auto;
-    white-space: nowrap;
-  ">
-    <button onclick="quickQuestion('Summarize my health today')" style="
-      display: inline-block;
-      padding: 8px 16px;
-      margin: 0 6px 0 0;
-      font-size: 12px;
-      background: rgba(78,205,196,0.2);
-      border: 1px solid rgba(78,205,196,0.4);
-      width: auto;
-      text-transform: none;
-      letter-spacing: 0;
-    ">📊 Daily Summary</button>
-    <button onclick="quickQuestion('Should I exercise now?')" style="
-      display: inline-block;
-      padding: 8px 16px;
-      margin: 0 6px 0 0;
-      font-size: 12px;
-      background: rgba(78,205,196,0.2);
-      border: 1px solid rgba(78,205,196,0.4);
-      width: auto;
-      text-transform: none;
-      letter-spacing: 0;
-    ">💪 Exercise?</button>
-    <button onclick="quickQuestion('Am I hydrated enough?')" style="
-      display: inline-block;
-      padding: 8px 16px;
-      margin: 0 6px 0 0;
-      font-size: 12px;
-      background: rgba(78,205,196,0.2);
-      border: 1px solid rgba(78,205,196,0.4);
-      width: auto;
-      text-transform: none;
-      letter-spacing: 0;
-    ">💧 Hydration?</button>
-    <button onclick="quickQuestion('Explain my wellness score')" style="
-      display: inline-block;
-      padding: 8px 16px;
-      margin: 0 6px 0 0;
-      font-size: 12px;
-      background: rgba(78,205,196,0.2);
-      border: 1px solid rgba(78,205,196,0.4);
-      width: auto;
-      text-transform: none;
-      letter-spacing: 0;
-    ">🎯 My Score</button>
-  </div>
-
-  <!-- Chat History -->
-  <div id="chatHistory" style="
-    flex: 1;
-    overflow-y: auto;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-  ">
-    <div style="
-      background: rgba(78,205,196,0.15);
-      padding: 16px;
-      border-radius: 12px;
-      border-left: 4px solid var(--accent2);
-      margin-bottom: 16px;
-    ">
-      <strong style="color: var(--accent2); display: block; margin-bottom: 8px;">👋 Welcome!</strong>
-      <p style="color: #f0f4f8; font-size: 14px; line-height: 1.6; margin: 0;">
-        I'm your offline health assistant. I analyze your health data locally to provide personalized insights, tips, and motivation.
-        <br><br>
-        Try asking:<br>
-        • "How's my wellness score?"<br>
-        • "Should I exercise?"<br>
-        • "What should I eat?"<br>
-        • "Analyze my mood"
-      </p>
-    </div>
-  </div>
-
-  <!-- Input Area -->
-  <div style="
-    padding: 16px 20px 20px;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    background: rgba(255,255,255,0.05);
-  ">
-    <div style="display: flex; gap: 12px;">
-      <textarea id="userMessage" placeholder="Ask me anything about your health..." style="
-        flex: 1;
-        padding: 12px;
-        border: 2px solid rgba(255,255,255,0.15);
-        border-radius: 12px;
-        background: rgba(10,14,39,0.8);
-        color: #fff;
-        font-size: 14px;
-        resize: none;
-        height: 44px;
-        font-family: inherit;
-      "></textarea>
-      <button onclick="sendMessage()" style="
-        width: 60px;
-        padding: 0;
-        margin: 0;
-        height: 44px;
-        background: linear-gradient(135deg, var(--accent), var(--accent2));
-        border-radius: 12px;
-        font-size: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      ">📤</button>
+      <h2>💡 Health Tips</h2>
+      <button class="btn" onclick="getHealthTips()" style="width:100%;margin-bottom:20px">Get Tips</button>
+      <div id="aiGuidance"></div>
     </div>
   </div>
 </div>
 
-<style>
-/* Chatbot animations */
-@keyframes slideUp {
-  from { bottom: -100%; }
-  to { bottom: 0; }
-}
+<!-- CHATBOT -->
+<div id="chatbotIcon" onclick="toggleChatbot()">🤖</div>
 
-#chatbotPanel.open {
-  bottom: 0 !important;
-  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-#chatbotIcon:hover {
-  transform: scale(1.1) rotate(5deg);
-  box-shadow: 0 12px 32px rgba(255,107,157,0.7);
-}
-
-#chatHistory::-webkit-scrollbar {
-  width: 6px;
-}
-
-#chatHistory::-webkit-scrollbar-track {
-  background: rgba(255,255,255,0.05);
-  border-radius: 10px;
-}
-
-#chatHistory::-webkit-scrollbar-thumb {
-  background: rgba(78,205,196,0.5);
-  border-radius: 10px;
-}
-
-#chatHistory::-webkit-scrollbar-thumb:hover {
-  background: rgba(78,205,196,0.8);
-}
-
-@media (min-width: 768px) {
-  #chatbotPanel {
-    left: auto;
-    right: 20px;
-    width: 420px;
-    max-height: 700px;
-    border-radius: 24px;
-  }
-  
-  #chatbotPanel.open {
-    bottom: 90px !important;
-  }
-}
-</style>
-<!-- CHATBOT FLOATING BUTTON -->
-<div id="chatbotIcon" style="position:fixed;bottom:90px;right:20px;width:60px;height:60px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 8px 24px rgba(78,205,196,0.5);z-index:9998;transition:all 0.3s ease;" onclick="toggleChatbot()">
-  <span style="font-size:28px;">🤖</span>
-</div>
-
-<!-- CHATBOT PANEL -->
-<div id="chatbotPanel" style="position:fixed;bottom:0;right:0;width:100%;max-width:400px;height:600px;background:rgba(10,14,39,0.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:24px 24px 0 0;box-shadow:0 -8px 32px rgba(0,0,0,0.6);z-index:9999;transform:translateY(100%);transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);border:1px solid rgba(78,205,196,0.3);">
-  <div style="padding:20px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center;">
-    <div>
-      <h3 style="color:var(--accent2);margin:0;font-size:18px;">🤖 Health Assistant</h3>
-      <p style="color:#94a3b8;font-size:12px;margin:4px 0 0 0;">100% Offline & Private</p>
-    </div>
-    <button onclick="toggleChatbot()" style="width:36px;height:36px;padding:0;border-radius:50%;background:rgba(255,255,255,0.1);border:none;color:#fff;cursor:pointer;font-size:20px;margin:0;">✕</button>
-  </div>
-  
-  <div style="padding:12px;display:flex;gap:8px;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,0.1);">
-    <button onclick="quickQuestion('Summarize my health')" style="padding:8px 14px;font-size:12px;white-space:nowrap;width:auto;margin:0;background:rgba(78,205,196,0.2);border:1px solid var(--accent2);">📋 Summary</button>
-    <button onclick="quickQuestion('Should I exercise?')" style="padding:8px 14px;font-size:12px;white-space:nowrap;width:auto;margin:0;background:rgba(78,205,196,0.2);border:1px solid var(--accent2);">💪 Exercise?</button>
-    <button onclick="quickQuestion('Am I hydrated?')" style="padding:8px 14px;font-size:12px;white-space:nowrap;width:auto;margin:0;background:rgba(78,205,196,0.2);border:1px solid var(--accent2);">💧 Hydration</button>
-    <button onclick="quickQuestion('Motivate me!')" style="padding:8px 14px;font-size:12px;white-space:nowrap;width:auto;margin:0;background:rgba(78,205,196,0.2);border:1px solid var(--accent2);">🔥 Motivation</button>
-  </div>
-  
-  <div id="chatHistory" style="height:400px;overflow-y:auto;padding:16px;"></div>
-  
-  <div style="padding:16px;border-top:1px solid rgba(255,255,255,0.1);">
-    <textarea id="userMessage" placeholder="Ask me about your health... (Press Enter to send)" style="width:100%;height:60px;resize:none;padding:12px;border:2px solid rgba(78,205,196,0.3);border-radius:12px;background:rgba(10,14,39,0.8);color:#fff;font-size:14px;margin:0;"></textarea>
-    <button onclick="sendMessage()" style="width:100%;margin-top:8px;padding:12px;">💬 Send Message</button>
-  </div>
-</div>
-
-<style>
-#chatbotPanel.open {
-  transform: translateY(0);
-}
-@media (max-width: 768px) {
-  #chatbotPanel {
-    max-width: 100%;
-    width: 100%;
-  }
-}
-</style>
-
-<script src="app.js"></script>
-```
-</body>
-</html>
+<div id="chatbotPanel">
+  <div class="chat-header">
+    <h3>🤖
