@@ -1,4 +1,32 @@
+const WEATHER_CONFIG = {
+  API_KEY: "6f731853752fe3afc0bfa077a1b08a15",
+  GEO_URL: "https://api.openweathermap.org/geo/1.0/zip",
+  WEATHER_URL: "https://api.openweathermap.org/data/2.5/weather"
+};
 
+// ===== GLOBAL STATE =====
+let state = {
+  steps: 0,
+  water: 0,
+  calories: 0,
+  moods: [],
+  activities: [],
+  quizIndex: 0,
+  quizScore: 0,
+  earnedBadges: new Set(),
+  userProfile: {},
+  currentPage: 'main',
+  weather: {
+    pincode: null,
+    location: null,
+    temp: null,
+    feelsLike: null,
+    humidity: null,
+    condition: null,
+    description: null,
+    lastUpdated: null
+  }
+};
 let chatHistory = [];
 function safeWeatherAccess(weather, property, defaultValue = null) {
   if (!weather || weather[property] === null || weather[property] === undefined) {
