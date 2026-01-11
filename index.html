@@ -804,7 +804,239 @@ select{
   <button onclick="navigateTo('mood')" id="navMood">🧠</button>
   <button onclick="navigateTo('ach')" id="navAch">🏆</button>
 </div>
+<!-- ===== OFFLINE HEALTH ASSISTANT CHATBOT ===== -->
+<div id="chatbotIcon" onclick="toggleChatbot()" style="
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(255,107,157,0.5);
+  z-index: 998;
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+">
+  🤖
+</div>
 
+<div id="chatbotPanel" style="
+  position: fixed;
+  bottom: -100%;
+  left: 0;
+  right: 0;
+  height: 70vh;
+  max-height: 600px;
+  background: rgba(10, 14, 39, 0.98);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-radius: 24px 24px 0 0;
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 -8px 32px rgba(0,0,0,0.6);
+  z-index: 999;
+  transition: bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+">
+  <!-- Header -->
+  <div style="
+    padding: 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(78,205,196,0.15), rgba(255,107,157,0.15));
+  ">
+    <div>
+      <h3 style="margin: 0; font-size: 20px; color: var(--accent2);">🤖 Offline Health Assistant</h3>
+      <p style="margin: 4px 0 0 0; font-size: 11px; color: #94a3b8;">🔒 100% Private - Data never leaves your device</p>
+    </div>
+    <button onclick="toggleChatbot()" style="
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      margin: 0;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    ">✕</button>
+  </div>
+
+  <!-- Quick Actions -->
+  <div style="
+    padding: 12px 20px;
+    background: rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    overflow-x: auto;
+    white-space: nowrap;
+  ">
+    <button onclick="quickQuestion('Summarize my health today')" style="
+      display: inline-block;
+      padding: 8px 16px;
+      margin: 0 6px 0 0;
+      font-size: 12px;
+      background: rgba(78,205,196,0.2);
+      border: 1px solid rgba(78,205,196,0.4);
+      width: auto;
+      text-transform: none;
+      letter-spacing: 0;
+    ">📊 Daily Summary</button>
+    <button onclick="quickQuestion('Should I exercise now?')" style="
+      display: inline-block;
+      padding: 8px 16px;
+      margin: 0 6px 0 0;
+      font-size: 12px;
+      background: rgba(78,205,196,0.2);
+      border: 1px solid rgba(78,205,196,0.4);
+      width: auto;
+      text-transform: none;
+      letter-spacing: 0;
+    ">💪 Exercise?</button>
+    <button onclick="quickQuestion('Am I hydrated enough?')" style="
+      display: inline-block;
+      padding: 8px 16px;
+      margin: 0 6px 0 0;
+      font-size: 12px;
+      background: rgba(78,205,196,0.2);
+      border: 1px solid rgba(78,205,196,0.4);
+      width: auto;
+      text-transform: none;
+      letter-spacing: 0;
+    ">💧 Hydration?</button>
+    <button onclick="quickQuestion('Explain my wellness score')" style="
+      display: inline-block;
+      padding: 8px 16px;
+      margin: 0 6px 0 0;
+      font-size: 12px;
+      background: rgba(78,205,196,0.2);
+      border: 1px solid rgba(78,205,196,0.4);
+      width: auto;
+      text-transform: none;
+      letter-spacing: 0;
+    ">🎯 My Score</button>
+  </div>
+
+  <!-- Chat History -->
+  <div id="chatHistory" style="
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+  ">
+    <div style="
+      background: rgba(78,205,196,0.15);
+      padding: 16px;
+      border-radius: 12px;
+      border-left: 4px solid var(--accent2);
+      margin-bottom: 16px;
+    ">
+      <strong style="color: var(--accent2); display: block; margin-bottom: 8px;">👋 Welcome!</strong>
+      <p style="color: #f0f4f8; font-size: 14px; line-height: 1.6; margin: 0;">
+        I'm your offline health assistant. I analyze your health data locally to provide personalized insights, tips, and motivation.
+        <br><br>
+        Try asking:<br>
+        • "How's my wellness score?"<br>
+        • "Should I exercise?"<br>
+        • "What should I eat?"<br>
+        • "Analyze my mood"
+      </p>
+    </div>
+  </div>
+
+  <!-- Input Area -->
+  <div style="
+    padding: 16px 20px 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05);
+  ">
+    <div style="display: flex; gap: 12px;">
+      <textarea id="userMessage" placeholder="Ask me anything about your health..." style="
+        flex: 1;
+        padding: 12px;
+        border: 2px solid rgba(255,255,255,0.15);
+        border-radius: 12px;
+        background: rgba(10,14,39,0.8);
+        color: #fff;
+        font-size: 14px;
+        resize: none;
+        height: 44px;
+        font-family: inherit;
+      "></textarea>
+      <button onclick="sendMessage()" style="
+        width: 60px;
+        padding: 0;
+        margin: 0;
+        height: 44px;
+        background: linear-gradient(135deg, var(--accent), var(--accent2));
+        border-radius: 12px;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      ">📤</button>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Chatbot animations */
+@keyframes slideUp {
+  from { bottom: -100%; }
+  to { bottom: 0; }
+}
+
+#chatbotPanel.open {
+  bottom: 0 !important;
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#chatbotIcon:hover {
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 12px 32px rgba(255,107,157,0.7);
+}
+
+#chatHistory::-webkit-scrollbar {
+  width: 6px;
+}
+
+#chatHistory::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.05);
+  border-radius: 10px;
+}
+
+#chatHistory::-webkit-scrollbar-thumb {
+  background: rgba(78,205,196,0.5);
+  border-radius: 10px;
+}
+
+#chatHistory::-webkit-scrollbar-thumb:hover {
+  background: rgba(78,205,196,0.8);
+}
+
+@media (min-width: 768px) {
+  #chatbotPanel {
+    left: auto;
+    right: 20px;
+    width: 420px;
+    max-height: 700px;
+    border-radius: 24px;
+  }
+  
+  #chatbotPanel.open {
+    bottom: 90px !important;
+  }
+}
+</style>
 <script src="app.js"></script>
 </body>
 </html>
