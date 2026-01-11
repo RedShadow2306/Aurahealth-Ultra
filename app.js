@@ -27,6 +27,19 @@ let state = {
     lastUpdated: null
   }
 };
+function getCachedWeather() {
+  // Use in-memory state instead of localStorage
+  if (!state.weather.lastUpdated) return null;
+  
+  const now = Date.now();
+  const oneHour = 60 * 60 * 1000;
+  
+  if (now - state.weather.lastUpdated < oneHour) {
+    return state.weather;
+  }
+  
+  return null;
+}
 let chatHistory = [];
 function safeWeatherAccess(weather, property, defaultValue = null) {
   if (!weather || weather[property] === null || weather[property] === undefined) {
