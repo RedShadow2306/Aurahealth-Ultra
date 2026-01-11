@@ -258,19 +258,8 @@ const stateData = window.state || {
       
       // Weather adjustments
 	  // Add this helper function at the top
-function safeWeatherAccess(weather, property, defaultValue = null) {
-  if (!weather || weather[property] === null || weather[property] === undefined) {
-    return defaultValue;
-  }
-  return weather[property];
-}
 
-// Then use it like this:
-const temp = safeWeatherAccess(weather, 'temp');
-if (temp !== null) {
-  // Use temp safely
-}
-if (weather && weather.temp !== null && weather.temp !== undefined) {
+if (weather && weather.temp !== null) {
   response += `\n🌡️ Weather adjustment:\n`;
   if (weather.temp > 30) {
           response += `Hot weather (${weather.temp}°C) - Increase to 10-12 glasses!\nYou lose more water through sweat.`;
@@ -861,8 +850,8 @@ weather: () => {
     response += `Moderate weather - 8 glasses target\n`;
   }
   
-if (weather.humidity !== null && weather.humidity !== undefined && weather.humidity > 70) {
-  response += `\nHigh humidity (${weather.humidity}%):\n`;
+if (weather && weather.humidity !== null && weather.humidity > 70) {
+  response += `\n🌧️ High humidity (${weather.humidity}%):\n`;
     response += `→ You'll sweat more\n`;
     response += `→ Drink extra fluids\n`;
   }
