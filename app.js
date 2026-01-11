@@ -1,44 +1,13 @@
-// ===== PAGE NAVIGATION SYSTEM =====
-function navigateTo(pageId) {
-  console.log('🔄 Navigating to:', pageId);
-  
-  // Hide all pages
-  const pages = document.querySelectorAll('.page, [id$="-page"], [id$="Page"]');
-  pages.forEach(page => {
-    page.style.display = 'none';
-  });
-  
-  // Show target page
-  const targetPage = document.getElementById(pageId) || 
-                     document.getElementById(pageId + '-page') || 
-                     document.getElementById(pageId + 'Page');
-  
-  if (targetPage) {
-    targetPage.style.display = 'block';
-    console.log('✅ Navigated to:', pageId);
-  } else {
-    console.error('❌ Page not found:', pageId);
-    // Try to show dashboard as fallback
-    const dashboard = document.getElementById('dash') || 
-                      document.getElementById('dashboard') ||
-                      document.getElementById('dash-page');
-    if (dashboard) {
-      dashboard.style.display = 'block';
-    }
+
+let chatHistory = [];
+function safeWeatherAccess(weather, property, defaultValue = null) {
+  if (!weather || weather[property] === null || weather[property] === undefined) {
+    return defaultValue;
   }
-  
-  // Update active nav button (if you have nav buttons)
-  const navButtons = document.querySelectorAll('.nav-btn, [onclick*="navigateTo"]');
-  navButtons.forEach(btn => {
-    btn.classList.remove('active');
-    if (btn.getAttribute('onclick')?.includes(`'${pageId}'`)) {
-      btn.classList.add('active');
-    }
-  });
+  return weather[property];
 }
 
-// Make it globally accessible
-window.navigateTo = navigateTo;// ===== CHATBOT UI MANAGEMENT =====
+// ===== CHATBOT UI MANAGEMENT =====
 function toggleChatbot() {
   const panel = document.getElementById('chatbotPanel');
   const icon = document.getElementById('chatbotIcon');
@@ -113,7 +82,15 @@ function detectIntent(message) {
 // ===== CHATBOT RESPONSE GENERATOR =====
 function generateChatbotResponse(userMessage) {
   const intent = detectIntent(userMessage);
-  const profile = state.userProfile || {};
+  const profile = window.state?.userProfile || {};
+const stateData = window.state || {
+  steps: 0,
+  water: 0,
+  calories: 0,
+  activities: [],
+  moods: [],
+  earnedBadges: new Set()
+};
   const score = calculateScore();
   const timeOfDay = getTimeOfDay();
   const weather = getCachedWeather();
@@ -239,6 +216,19 @@ function generateChatbotResponse(userMessage) {
       }
       
       // Weather adjustments
+	  // Add this helper function at the top
+function safeWeatherAccess(weather, property, defaultValue = null) {
+  if (!weather || weather[property] === null || weather[property] === undefined) {
+    return defaultValue;
+  }
+  return weather[property];
+}
+
+// Then use it like this:
+const temp = safeWeatherAccess(weather, 'temp');
+if (temp !== null) {
+  // Use temp safely
+}
 if (weather && weather.temp !== null && weather.temp !== undefined) {
   response += `\n🌡️ Weather adjustment:\n`;
   if (weather.temp > 30) {
